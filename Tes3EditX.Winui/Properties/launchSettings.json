@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Tes3EditX.Winui (Package)": {
+      "commandName": "MsixPackage",
+      "nativeDebugging": false
+    },
+    "Tes3EditX.Winui (Unpackaged)": {
+      "commandName": "Project",
+      "workingDirectory": "E:\\gog\\test",
+      "nativeDebugging": false
+    }
+  }
+}

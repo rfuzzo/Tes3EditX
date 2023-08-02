@@ -1,0 +1,62 @@
+﻿<Page
+    x:Class="Tes3EditX.Winui.Pages.ComparePluginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Tes3EditX.Winui.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:Tes3EditX.Backend.ViewModels"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="PluginsListViewTemplate" x:DataType="viewmodels:PluginItemViewModel">
+            <TextBlock
+                Margin="0,5,0,5"
+                x:Phase="1"
+                Text="{x:Bind Name}" />
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Data Files Folder  -->
+        <StackPanel Margin="12,0,0,0" Orientation="Horizontal">
+
+            <Button Command="{x:Bind ViewModel.SelectFolderCommand}" Content="..." />
+            <TextBlock
+                MaxWidth="200"
+                Margin="12,0,0,0"
+                VerticalAlignment="Center"
+                Text="{x:Bind ViewModel.FolderPath.Name, Mode=OneWay}"
+                ToolTipService.ToolTip="{x:Bind ViewModel.FolderPath.FullName}" />
+
+        </StackPanel>
+
+        <!--  Plugins list  -->
+        <!--  SelectedItems="{x:Bind ViewModel.SelectedPlugins, Mode=TwoWay}"  -->
+        <ListView
+            x:Name="listview"
+            Grid.Row="1"
+            Margin="12,12,0,0"
+            Header="Plugins"
+            IsMultiSelectCheckBoxEnabled="True"
+            ItemTemplate="{StaticResource PluginsListViewTemplate}"
+            ItemsSource="{x:Bind ViewModel.Plugins, Mode=OneWay}"
+            SelectionChanged="ListView_SelectionChanged"
+            SelectionMode="Multiple" />
+
+        <!--  Compare  -->
+        <Button
+            Grid.Row="2"
+            Margin="20,0,0,0"
+            Command="{x:Bind ViewModel.CompareCommand}"
+            Content="Compare" />
+
+
+    </Grid>
+</Page>

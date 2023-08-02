@@ -1,0 +1,4 @@
+[submodule "TES3Tool"]
+	path = TES3Tool
+	url = https://github.com/rfuzzo/TES3Tool
+	branch = tes3editx

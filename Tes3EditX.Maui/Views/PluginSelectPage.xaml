@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Tes3EditX.Maui.Views.PluginSelectPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="PluginSelectPage">
+
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <HorizontalStackLayout Grid.Row="0" Margin="20">
+
+            <Label
+                HorizontalOptions="Center"
+                Text="{Binding FolderPath.FullName}"
+                VerticalOptions="Center" />
+            <Button
+                Margin="20,0,0,0"
+                Command="{Binding SelectFolderCommand}"
+                HorizontalOptions="Center"
+                Text="..."
+                VerticalOptions="Center" />
+
+            <Button
+                Margin="20,0,0,0"
+                Command="{Binding CompareCommand}"
+                HorizontalOptions="Center"
+                Text="Compare"
+                VerticalOptions="Center" />
+
+        </HorizontalStackLayout>
+
+        <ListView
+            Grid.Row="1"
+            Header="Plugins"
+            ItemsSource="{Binding Plugins}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <SwitchCell
+                        On="{Binding Enabled}"
+                        OnChanged="SwitchCell_OnChanged"
+                        Text="{Binding Name}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+
+
+
+</ContentPage>

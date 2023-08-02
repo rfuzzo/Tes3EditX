@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Tes3EditX.Maui.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Tes3EditX.Maui"
+    xmlns:views="clr-namespace:Tes3EditX.Maui.Views"
+    Shell.FlyoutBehavior="Disabled">
+
+
+    <TabBar x:Name="main" Route="Main">
+
+        <ShellContent
+            Title="Plugins"
+            ContentTemplate="{DataTemplate views:PluginSelectPage}"
+            Icon="{OnPlatform 'icon_about.png',
+                              iOS='icon_about_ios.png',
+                              MacCatalyst='icon_about_ios.png'}"
+            Route="Select" />
+
+        <ShellContent
+            Title="Main"
+            ContentTemplate="{DataTemplate views:MainPage}"
+            Icon="{OnPlatform 'icon_about.png',
+                              iOS='icon_about_ios.png',
+                              MacCatalyst='icon_about_ios.png'}"
+            Route="Main" />
+
+        <ShellContent
+            x:Name="about"
+            Title="About"
+            ContentTemplate="{DataTemplate views:AboutPage}"
+            Route="About" />
+    </TabBar>
+
+</Shell>
