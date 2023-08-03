@@ -132,6 +132,9 @@ public partial class ConflictsViewModel : ObservableRecipient
         var names = _compareService.GetNames(recordViewModel.Tag);
         var conflicts = _compareService.GetConflictMap(recordViewModel.Plugins, recordId, names);
 
+        // dbg
+        //var b = _compareService.HasAnyConflict(recordId, recordViewModel.Plugins);
+
         // -----------------------------------------
         // loop again to get field equality
         CompareService.SetConflictStatus(conflicts);

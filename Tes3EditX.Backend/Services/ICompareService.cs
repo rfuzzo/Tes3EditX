@@ -17,4 +17,5 @@ public interface ICompareService
     Task CalculateConflicts();
     List<(string, List<RecordFieldViewModel>)> GetConflictMap(List<FileInfo> plugins, string recordId, List<string> names);
     List<string> GetNames(string tag);
+    bool HasAnyConflict(string key, List<FileInfo> plugins);
 }

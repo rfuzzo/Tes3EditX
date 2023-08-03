@@ -14,6 +14,7 @@ using Tes3EditX.Backend.Models;
 using Tes3EditX.Backend.ViewModels;
 using TES3Lib;
 using TES3Lib.Base;
+using TES3Lib.Subrecords.Shared;
 
 namespace Tes3EditX.Backend.Services;
 
@@ -120,7 +121,10 @@ public partial class CompareService : ObservableObject, ICompareService
             await Parallel.ForEachAsync(conflict_map, async (item, token) =>
             {
                 //await Task.Run(() => CheckForConflict(toRemove, item.Key, item.Value));
-                CheckForConflict(toRemove, item.Key, item.Value);
+                if (!HasAnyConflict(item.Key, item.Value))
+                {
+                    toRemove.Add(item.Key);
+                }
                 progress.Report(0);
 
                 await Task.CompletedTask;
@@ -128,8 +132,11 @@ public partial class CompareService : ObservableObject, ICompareService
 #else
          foreach (var item in conflict_map)
          {
-            CheckForConflict(toRemove, item.Key, item.Value);
-            _notificationService.Progress++;
+                if (!HasAnyConflict(item.Key, item.Value))
+                {
+                    toRemove.Add(item.Key);
+                }
+                _notificationService.Progress++;
          }
 #endif
 
@@ -145,18 +152,45 @@ public partial class CompareService : ObservableObject, ICompareService
         }
 
         Conflicts = conflict_map;
+
+        await Task.CompletedTask;
     }
 
-    private void CheckForConflict(List<string> toRemove, string key, List<FileInfo> value)
+    public bool HasAnyConflict(string key, List<FileInfo> plugins)
     {
         var tag = key.Split(',').First();
-        var names = GetNames(tag);
-        var conflicts = GetConflictMap(value, key, names);
-        var hasConflicts = SetConflictStatus(conflicts);
-        if (!hasConflicts)
+        var records = new List<Record>();
+        foreach (var pluginPath in plugins)
         {
-            toRemove.Add(key);
+            // get plugin
+            if (Plugins.TryGetValue(pluginPath, out var plugin))
+            {
+                // get record
+                var record = plugin.Records.FirstOrDefault(x => x is not null && x.GetUniqueId() == key);
+                if (record is not null)
+                {
+                    records.Add(record);
+                }
+            }
         }
+
+        // check for equality
+        var isConflict = false;
+        for (int i = 0; i < records.Count; i++)
+        {
+            var r = records[i];
+            for (int j = i + 1; j < records.Count; j++)
+            {
+                var r2 = records[j];
+                if (!r.DeepEquals(r2))
+                {
+                    isConflict = true;
+                    break;
+                }
+            }
+        }
+
+        return isConflict;
     }
 
     partial void OnConflictsChanged(Dictionary<string, List<FileInfo>> value)
