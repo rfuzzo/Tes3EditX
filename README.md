@@ -1,3 +1,5 @@
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/rfuzzo/tes3editx/check.yml)
+
 # Tes3EditX
 
 TES3 plugin Conflict viewer.
