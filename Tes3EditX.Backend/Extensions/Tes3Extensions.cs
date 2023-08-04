@@ -9,9 +9,11 @@ namespace Tes3EditX.Backend.Extensions;
 
 public static class Tes3Extensions
 {
-    public static string GetUniqueId(this Record record)
+    public const char Separator = ';';
+
+    public static RecordId GetUniqueId(this Record record)
     {
-        return $"{record.Name},{record.GetEditorId()}";
+        return new(record.Name,record.GetEditorId());
     }
 
     public static ulong GetUniqueNameHash(this Record record)

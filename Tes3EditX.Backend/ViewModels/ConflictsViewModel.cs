@@ -68,14 +68,12 @@ public partial class ConflictsViewModel : ObservableRecipient
         });
     }
 
-    public void RegenerateRecords(Dictionary<string, List<FileInfo>> conflicts)
+    public void RegenerateRecords(Dictionary<RecordId, List<FileInfo>> conflicts)
     {
         _records.Clear();
         foreach ((var id, List<FileInfo> plugins) in conflicts)
         {
-            var tag = id.Split(',').First();
-            var name = id.Split(',').Last();
-            _records.Add(new RecordItemViewModel(tag, name, plugins));
+            _records.Add(new RecordItemViewModel(id.Tag, id.EditorId, plugins));
         }
 
         FilterRecords();

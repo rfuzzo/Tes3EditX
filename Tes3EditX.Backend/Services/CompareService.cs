@@ -23,7 +23,7 @@ public partial class CompareService : ObservableObject, ICompareService
     public Dictionary<FileInfo,TES3> Plugins { get; } = new();
 
     [ObservableProperty]
-    private Dictionary<string, List<FileInfo>> _conflicts = new();
+    private Dictionary<RecordId, List<FileInfo>> _conflicts = new();
 
     private readonly INotificationService _notificationService;
     private readonly ISettingsService _settingsService;
@@ -51,7 +51,7 @@ public partial class CompareService : ObservableObject, ICompareService
 
         // map plugin records
 
-        var pluginMap = new Dictionary<FileInfo, HashSet<string>>();
+        var pluginMap = new Dictionary<FileInfo, HashSet<RecordId>>();
         foreach (var model in Selectedplugins)
         {
             var plugin = model.Plugin;
@@ -66,10 +66,10 @@ public partial class CompareService : ObservableObject, ICompareService
         }
 
         // map of record ids and according plugin paths
-        Dictionary<string, List<FileInfo>> conflict_map = new();
+        Dictionary<RecordId, List<FileInfo>> conflict_map = new();
         foreach (var (pluginKey, records) in pluginMap)
         {
-            List<string> newrecords = new();
+            List<RecordId> newrecords = new();
             foreach (var record in records)
             {
                 // then we have a conflict
@@ -111,7 +111,7 @@ public partial class CompareService : ObservableObject, ICompareService
         if (_settingsService.CullConflicts)
         {
 
-            var toRemove = new List<string>();
+            var toRemove = new List<RecordId>();
 
             var stopwatch = Stopwatch.StartNew();
 
@@ -156,9 +156,9 @@ public partial class CompareService : ObservableObject, ICompareService
         await Task.CompletedTask;
     }
 
-    public bool HasAnyConflict(string key, List<FileInfo> plugins)
+    public bool HasAnyConflict(RecordId key, List<FileInfo> plugins)
     {
-        var tag = key.Split(',').First();
+        var tag = key.Tag;
         var records = new List<Record>();
         foreach (var pluginPath in plugins)
         {
@@ -193,7 +193,7 @@ public partial class CompareService : ObservableObject, ICompareService
         return isConflict;
     }
 
-    partial void OnConflictsChanged(Dictionary<string, List<FileInfo>> value)
+    partial void OnConflictsChanged(Dictionary<RecordId, List<FileInfo>> value)
     {
         WeakReferenceMessenger.Default.Send(new ConflictsChangedMessage(value));
     }
@@ -219,7 +219,7 @@ public partial class CompareService : ObservableObject, ICompareService
         throw new ArgumentException();
     }
 
-    public List<(string, List<RecordFieldViewModel>)> GetConflictMap(List<FileInfo> plugins, string recordId, List<string> names)
+    public List<(string, List<RecordFieldViewModel>)> GetConflictMap(List<FileInfo> plugins, RecordId recordId, List<string> names)
     {
         // fields by plugin
         var conflictsMap = new List<(string, List<RecordFieldViewModel>)>();

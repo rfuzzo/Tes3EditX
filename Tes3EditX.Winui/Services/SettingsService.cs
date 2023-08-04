@@ -43,5 +43,5 @@ public class SettingsService : ISettingsService
 
     public int MinConflicts { get; set; } = 2;
 
-    public bool CullConflicts { get; set; } = true;
+    public bool CullConflicts { get; set; } = false;
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tes3EditX.Backend.Extensions;
 
 namespace Tes3EditX.Backend.ViewModels;
 
@@ -33,5 +34,5 @@ public class RecordItemViewModel
         return Name;
     }
 
-    public string GetUniqueId() => $"{Tag},{Name}";
+    public RecordId GetUniqueId() => new(Tag,Name);
 }

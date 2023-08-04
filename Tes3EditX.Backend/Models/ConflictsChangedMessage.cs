@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tes3EditX.Backend.Extensions;
 
 namespace Tes3EditX.Backend.Models
 {
-    public class ConflictsChangedMessage : ValueChangedMessage<Dictionary<string, List<FileInfo>>>
+    public class ConflictsChangedMessage : ValueChangedMessage<Dictionary<RecordId, List<FileInfo>>>
     {
-        public ConflictsChangedMessage(Dictionary<string, List<FileInfo>> conflicts) : base(conflicts)
+        public ConflictsChangedMessage(Dictionary<RecordId, List<FileInfo>> conflicts) : base(conflicts)
         {
             // 
         }
