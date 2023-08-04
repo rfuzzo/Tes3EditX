@@ -10,50 +10,96 @@
 
     <Page.Resources>
         <DataTemplate x:Key="PluginsListViewTemplate" x:DataType="viewmodels:PluginItemViewModel">
+            <!--<StackPanel Orientation="Horizontal">-->
+
+            <!--<CheckBox IsChecked="{x:Bind Enabled, Mode=TwoWay}" />-->
             <TextBlock
                 Margin="0,5,0,5"
                 x:Phase="1"
                 Text="{x:Bind Name}" />
+            <!--</StackPanel>-->
         </DataTemplate>
     </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--  Data Files Folder  -->
-        <StackPanel Margin="12,0,0,0" Orientation="Horizontal">
+        <Grid>
 
-            <Button Command="{x:Bind ViewModel.SelectFolderCommand}" Content="..." />
-            <TextBlock
-                MaxWidth="200"
-                Margin="12,0,0,0"
-                VerticalAlignment="Center"
-                Text="{x:Bind ViewModel.FolderPath.Name, Mode=OneWay}"
-                ToolTipService.ToolTip="{x:Bind ViewModel.FolderPath.FullName}" />
 
-        </StackPanel>
+            <StackPanel Margin="12,0,0,0" Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="Data Files: " />
+
+                <TextBlock
+                    MaxWidth="200"
+                    Margin="12,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{x:Bind ViewModel.FolderPath.Name, Mode=OneWay}"
+                    ToolTipService.ToolTip="{x:Bind ViewModel.FolderPath.FullName}" />
+
+            </StackPanel>
+
+            <Button
+                Margin="0,0,10,0"
+                HorizontalAlignment="Right"
+                Command="{x:Bind ViewModel.SelectFolderCommand}"
+                Content="..." />
+        </Grid>
+
+        <CommandBar Grid.Row="1" Background="Transparent">
+
+            <AppBarButton
+                Click="AppBarButtonSelect_Click"
+                Icon="SelectAll"
+                Label="Select All" />
+            <AppBarButton
+                Click="AppBarButtonClear_Click"
+                Icon="ClearSelection"
+                Label="Clear Selection" />
+            <AppBarToggleButton
+                x:Name="activateMastersButton"
+                Icon="ImportAll"
+                IsChecked="True"
+                Label="Activate Masters" />
+
+
+        </CommandBar>
 
         <!--  Plugins list  -->
         <!--  SelectedItems="{x:Bind ViewModel.SelectedPlugins, Mode=TwoWay}"  -->
+        <!--  IsMultiSelectCheckBoxEnabled="True"  -->
         <ListView
             x:Name="listview"
-            Grid.Row="1"
+            Grid.Row="2"
             Margin="12,12,0,0"
             Header="Plugins"
             IsMultiSelectCheckBoxEnabled="True"
             ItemTemplate="{StaticResource PluginsListViewTemplate}"
-            ItemsSource="{x:Bind ViewModel.Plugins, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.PluginsDisplay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             SelectionChanged="ListView_SelectionChanged"
             SelectionMode="Multiple" />
 
+        <!--  Filter  -->
+        <TextBox
+            Grid.Row="3"
+            Margin="10,0,0,4"
+            Header="Filter"
+            TextChanged="TextBox_TextChanged" />
+
         <!--  Compare  -->
         <Button
-            Grid.Row="2"
-            Margin="20,0,0,0"
+            Grid.Row="4"
+            Margin="10,0,0,0"
             Command="{x:Bind ViewModel.CompareCommand}"
             Content="Compare" />
 

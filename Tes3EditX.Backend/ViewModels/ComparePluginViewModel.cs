@@ -1,14 +1,10 @@
 ﻿#define PARALLEL
 
-using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Diagnostics;
 using Tes3EditX.Backend.Services;
 using TES3Lib;
-using System.Diagnostics.Metrics;
-using System.Diagnostics;
 
 namespace Tes3EditX.Backend.ViewModels;
 
@@ -20,11 +16,16 @@ public partial class ComparePluginViewModel : ObservableObject
     private readonly ISettingsService _settingsService;
     private readonly IFileApiService _folderPicker;
 
-    [ObservableProperty]
-    private ObservableCollection<PluginItemViewModel> _plugins = new();
+
+    public List<PluginItemViewModel> PluginsList { get; set; } = new();
 
     [ObservableProperty]
-    private List<PluginItemViewModel> _selectedPlugins = new();
+    private List<PluginItemViewModel> _pluginsDisplay = new();
+
+    public string PluginFilterText { get; set; } = "";
+
+    //[ObservableProperty]
+    //private List<PluginItemViewModel> _selectedPlugins = new();
 
     [ObservableProperty]
     private DirectoryInfo _folderPath;
@@ -58,11 +59,11 @@ public partial class ComparePluginViewModel : ObservableObject
 
         var stopwatch = Stopwatch.StartNew();
 
-        List<FileInfo> pluginPaths = FolderPath.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
+        var pluginPaths = FolderPath.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
             .Where(x =>
                 x.Extension.Equals(".esp", StringComparison.OrdinalIgnoreCase) ||
                 x.Extension.Equals(".esm", StringComparison.OrdinalIgnoreCase)).ToList();
-        
+
         _notificationService.Progress = 0;
         _notificationService.Maximum = pluginPaths.Count;
         _notificationService.Enabled = false;
@@ -94,7 +95,8 @@ public partial class ComparePluginViewModel : ObservableObject
 
         // sort by load order
         var final = plugins.OrderBy(x => x.Info.Extension.ToLower()).ThenBy(x => x.Info.LastWriteTime).ToList();
-        Plugins = new(final);
+        PluginsList = new(final);
+        Filter("");
 
         stopwatch.Stop();
         _notificationService.Text = stopwatch.Elapsed.TotalSeconds.ToString();
@@ -114,7 +116,7 @@ public partial class ComparePluginViewModel : ObservableObject
             if (FolderPath.Exists)
             {
                 _loadOnce = false;
-               await InitPluginsAsync();
+                await InitPluginsAsync();
             }
         }
     }
@@ -122,9 +124,31 @@ public partial class ComparePluginViewModel : ObservableObject
     [RelayCommand]
     private async Task Compare()
     {
-        _compareService.Selectedplugins = SelectedPlugins;
+        _compareService.Selectedplugins = PluginsList
+            .Where(x => x.Enabled)
+            .OrderBy(x => x.Info.Extension.ToLower())
+            .ThenBy(x => x.Info.LastWriteTime);
         await _compareService.CalculateConflicts(); // todo make async
         // navigate away
         await _navigationService.NavigateToAsync("//Main/Main");
+    }
+
+    public void Filter(string value)
+    {
+        // keep selection
+        var selected = PluginsList.Where(x => x.Enabled).Select(x => x.Name).ToList();
+
+        PluginsDisplay = PluginsList.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        PluginsDisplay = PluginsDisplay.OrderBy(x => x.Info.Extension.ToLower()).ThenBy(x => x.Info.LastWriteTime).ToList();
+        //Plugins.Sort((a,b) => a.Info.LastWriteTime.CompareTo(b.Info.LastWriteTime));
+
+        foreach (PluginItemViewModel item in PluginsList)
+        {
+            if (selected.Contains(item.Name))
+            {
+                item.Enabled = true;
+            }
+
+        }
     }
 }
