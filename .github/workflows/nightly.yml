@@ -29,14 +29,11 @@ jobs:
       run: Compress-Archive -Path Tes3EditX.Winui\bin\x64\Release\net7.0-windows10.0.19041.0\win10-x64 -DestinationPath Release.zip 
       
     # Update tag and pre-release
-    # - Update (force-push) tag to the commit that is used in the workflow.
-    # - Upload artifacts defined by the user.
-    - uses: pyTooling/Actions/releaser@r0
+    - uses: ncipollo/release-action@v1
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: nightly
-        files: |
-          Release.zip
- 
+        artifacts: "Release.zip"
+        tag: "nightly"
+        allowUpdates: true
+        removeArtifacts: true
    
    
