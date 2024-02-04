@@ -25,7 +25,7 @@ public class SettingsService : ISettingsService
     public DirectoryInfo GetWorkingDirectory()
     {
         //return Preferences.Default.Get(WDIR, new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory));
-        if (ThemeHelper.IsPackaged())
+        if (NativeHelper.IsAppPackaged)
         {
             return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
         }

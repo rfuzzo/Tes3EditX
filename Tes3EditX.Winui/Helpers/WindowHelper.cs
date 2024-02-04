@@ -14,7 +14,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Tes3EditX.Winui;
+using Windows.Storage;
 using WinRT.Interop;
 
 namespace AppUIBasics.Helper
@@ -65,9 +67,38 @@ namespace AppUIBasics.Helper
             }
             return null;
         }
+        // get dpi for an element
+        static public double GetRasterizationScaleForElement(UIElement element)
+        {
+            if (element.XamlRoot != null)
+            {
+                foreach (Window window in _activeWindows)
+                {
+                    if (element.XamlRoot == window.Content.XamlRoot)
+                    {
+                        return element.XamlRoot.RasterizationScale;
+                    }
+                }
+            }
+            return 0.0;
+        }
 
         static public List<Window> ActiveWindows { get { return _activeWindows; } }
 
         static private List<Window> _activeWindows = new List<Window>();
+
+        static public StorageFolder GetAppLocalFolder()
+        {
+            StorageFolder localFolder;
+            if (!NativeHelper.IsAppPackaged)
+            {
+                localFolder = Task.Run(async () => await StorageFolder.GetFolderFromPathAsync(System.AppContext.BaseDirectory)).Result;
+            }
+            else
+            {
+                localFolder = ApplicationData.Current.LocalFolder;
+            }
+            return localFolder;
+        }
     }
 }

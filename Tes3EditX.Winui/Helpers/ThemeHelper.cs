@@ -1,126 +1,96 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Windows.Storage;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Tes3EditX.Winui;
-using Windows.Storage;
 
-namespace AppUIBasics.Helper;
-/// <summary>
-/// Class providing functionality around switching and restoring theme settings
-/// https://github.com/microsoft/WinUI-Gallery/blob/main/WinUIGallery/Helper/ThemeHelper.cs
-/// </summary>
-public static class ThemeHelper
+namespace AppUIBasics.Helper
 {
-    private const string SelectedAppThemeKey = "SelectedAppTheme";
-
-#if !UNPACKAGED
-    private static Window CurrentApplicationWindow;
-#endif
-    // Keep reference so it does not get optimized/garbage collected
-#if UNIVERSAL
-        private static UISettings uiSettings;
-#endif
     /// <summary>
-    /// Gets the current actual theme of the app based on the requested theme of the
-    /// root element, or if that value is Default, the requested theme of the Application.
+    /// Class providing functionality around switching and restoring theme settings
     /// </summary>
-    public static ElementTheme ActualTheme
+    public static class ThemeHelper
     {
-        get
+        private const string SelectedAppThemeKey = "SelectedAppTheme";
+
+        /// <summary>
+        /// Gets the current actual theme of the app based on the requested theme of the
+        /// root element, or if that value is Default, the requested theme of the Application.
+        /// </summary>
+        public static ElementTheme ActualTheme
         {
-            foreach (var window in WindowHelper.ActiveWindows)
+            get
             {
-                if (window.Content is FrameworkElement rootElement)
+                foreach (Window window in WindowHelper.ActiveWindows)
                 {
-                    if (rootElement.RequestedTheme != ElementTheme.Default)
+                    if (window.Content is FrameworkElement rootElement)
+                    {
+                        if (rootElement.RequestedTheme != ElementTheme.Default)
+                        {
+                            return rootElement.RequestedTheme;
+                        }
+                    }
+                }
+
+                return App.GetEnum<ElementTheme>(App.Current.RequestedTheme.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets (with LocalSettings persistence) the RequestedTheme of the root element.
+        /// </summary>
+        public static ElementTheme RootTheme
+        {
+            get
+            {
+                foreach (Window window in WindowHelper.ActiveWindows)
+                {
+                    if (window.Content is FrameworkElement rootElement)
                     {
                         return rootElement.RequestedTheme;
                     }
                 }
+
+                return ElementTheme.Default;
             }
-
-            return App.GetEnum<ElementTheme>(App.Current.RequestedTheme.ToString());
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets (with LocalSettings persistence) the RequestedTheme of the root element.
-    /// </summary>
-    public static ElementTheme RootTheme
-    {
-        get
-        {
-            foreach (var window in WindowHelper.ActiveWindows)
+            set
             {
-                if (window.Content is FrameworkElement rootElement)
+                foreach (Window window in WindowHelper.ActiveWindows)
                 {
-                    return rootElement.RequestedTheme;
+                    if (window.Content is FrameworkElement rootElement)
+                    {
+                        rootElement.RequestedTheme = value;
+                    }
+                }
+
+                if (NativeHelper.IsAppPackaged)
+                {
+                    ApplicationData.Current.LocalSettings.Values[SelectedAppThemeKey] = value.ToString();
                 }
             }
-
-            return ElementTheme.Default;
         }
-        set
+
+        public static void Initialize()
         {
-            foreach (var window in WindowHelper.ActiveWindows)
+            if (NativeHelper.IsAppPackaged)
             {
-                if (window.Content is FrameworkElement rootElement)
+                string savedTheme = ApplicationData.Current.LocalSettings.Values[SelectedAppThemeKey]?.ToString();
+
+                if (savedTheme != null)
                 {
-                    rootElement.RequestedTheme = value;
+                    RootTheme = App.GetEnum<ElementTheme>(savedTheme);
                 }
             }
-
-#if !UNPACKAGED
-            ApplicationData.Current.LocalSettings.Values[SelectedAppThemeKey] = value.ToString();
-#endif
-            UpdateSystemCaptionButtonColors();
         }
-    }
 
-    // TODO Super dumb
-    public static bool IsPackaged()
-    {
-        try
+        public static bool IsDarkTheme()
         {
-            var current = ApplicationData.Current;
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-
-    public static void Initialize()
-    {
-#if !UNPACKAGED
-        // Save reference as this might be null when the user is in another app
-        CurrentApplicationWindow = App.StartupWindow;
-
-        if (IsPackaged())
-        {
-            var savedTheme = ApplicationData.Current.LocalSettings.Values[SelectedAppThemeKey]?.ToString();
-
-            if (savedTheme != null)
+            if (RootTheme == ElementTheme.Default)
             {
-                RootTheme = App.GetEnum<ElementTheme>(savedTheme);
+                return Application.Current.RequestedTheme == ApplicationTheme.Dark;
             }
+            return RootTheme == ElementTheme.Dark;
         }
-       
-#endif
-    }
-
-    public static bool IsDarkTheme()
-    {
-        return RootTheme == ElementTheme.Default
-            ? Application.Current.RequestedTheme == ApplicationTheme.Dark
-            : RootTheme == ElementTheme.Dark;
-    }
-
-    public static void UpdateSystemCaptionButtonColors()
-    {
     }
 }

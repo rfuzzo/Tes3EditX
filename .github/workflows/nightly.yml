@@ -21,14 +21,14 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 8.0.x
         
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore -c Release
     - name: zip folder
-      run: Compress-Archive -Path Tes3EditX.Winui\bin\x64\Release\net7.0-windows10.0.19041.0\win10-x64 -DestinationPath Release.zip 
+      run: Compress-Archive -Path Tes3EditX.Winui\bin\x64\Release -DestinationPath Release.zip 
       
     # Update tag and pre-release
     - uses: ncipollo/release-action@v1
