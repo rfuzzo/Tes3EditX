@@ -29,18 +29,6 @@
             IsSourceGrouped="True"
             Source="{x:Bind ViewModel.GroupedRecords, Mode=OneWay}" />
 
-        <!--  Editor Templates  -->
-        <!--<DataTemplate x:Key="StringTemplate" x:DataType="interfaces:IStringView">
-            <TextBox Text="{x:Bind Text}" />
-        </DataTemplate>
-        <DataTemplate x:Key="IntegerTemplate" x:DataType="interfaces:IIntegerView">
-            <NumberBox
-                LargeChange="100"
-                SmallChange="10"
-                SpinButtonPlacementMode="Compact"
-                Value="{x:Bind Value}" />
-        </DataTemplate>-->
-
         <helpers:BooleanToColorConverter x:Key="ColorConverter" />
         <helpers:BooleanToColorConverterFieldName x:Key="ColorConverterFieldName" />
 
@@ -58,21 +46,7 @@
             </StackPanel>
         </DataTemplate>
 
-
-
-        <!--<helpers:RecordTemplateSelector
-            x:Key="RecordTemplateSelector"
-            Common="{StaticResource CommonTemplate}"
-            IntegerTemplate="{StaticResource IntegerTemplate}"
-            StringTemplate="{StaticResource StringTemplate}" />-->
-
         <helpers:RecordViewTemplateSelector x:Key="RecordViewTemplateSelector" Common="{StaticResource CommonTemplate}" />
-
-
-
-
-
-
 
         <!--  Item Repeaters  -->
 
@@ -92,11 +66,6 @@
                     ItemTemplate="{StaticResource StringOrFieldTemplateSelector}"
                     ItemsSource="{x:Bind FieldByPlugins}">
 
-                    <!--  <UniformGridLayout MinItemHeight="40" MinItemWidth="200" />-->
-                    <!--  <StackLayout
-     x:Name="HorizontalStackLayout"
-     Orientation="Horizontal"
-     Spacing="8" />-->
                     <ItemsRepeater.Layout>
 
                         <StackLayout

@@ -12,23 +12,17 @@ using TES3Lib.Base;
 
 namespace Tes3EditX.Backend.Services;
 
-public partial class CompareService : ObservableObject, ICompareService
+public partial class CompareService(INotificationService notificationService, ISettingsService settingsService) : ObservableObject, ICompareService
 {
     public Dictionary<FileInfo, TES3> Plugins { get; } = [];
 
     [ObservableProperty]
     private Dictionary<RecordId, List<FileInfo>> _conflicts = [];
 
-    private readonly INotificationService _notificationService;
-    private readonly ISettingsService _settingsService;
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly ISettingsService _settingsService = settingsService;
 
     public IEnumerable<PluginItemViewModel> Selectedplugins { get; set; } = new List<PluginItemViewModel>();
-
-    public CompareService(INotificationService notificationService, ISettingsService settingsService)
-    {
-        _notificationService = notificationService;
-        _settingsService = settingsService;
-    }
 
     // todo get load order right
     // todo use hashes
@@ -40,11 +34,9 @@ public partial class CompareService : ObservableObject, ICompareService
         }
 
         Conflicts.Clear();
-        // TODO optimize load
         Plugins.Clear();
 
         // map plugin records
-
         Dictionary<FileInfo, HashSet<RecordId>> pluginMap = [];
         foreach (PluginItemViewModel model in Selectedplugins)
         {
@@ -85,6 +77,7 @@ public partial class CompareService : ObservableObject, ICompareService
         }
 
         // TODO dedup?
+
         // remove single entries (no conflicts)
         // a true conflict is only at > 2 conflicting entries
         IEnumerable<RecordId> singleRecords = conflict_map.Where(x => x.Value.Count < _settingsService.MinConflicts).Select(x => x.Key);

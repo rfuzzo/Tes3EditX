@@ -68,11 +68,18 @@ public partial class ConflictsViewModel : ObservableRecipient
 
     public void RegenerateRecords(Dictionary<RecordId, List<FileInfo>> conflicts)
     {
+        var tags = new List<string>() { "_" };
         _records.Clear();
         foreach ((RecordId? id, List<FileInfo> plugins) in conflicts)
         {
             _records.Add(new RecordItemViewModel(id.Tag, id.EditorId, plugins));
+            if (!tags.Contains(id.Tag))
+            {
+                tags.Add(id.Tag);
+            }
         }
+
+        Tags = new(tags);
 
         FilterRecords();
     }
@@ -110,8 +117,6 @@ public partial class ConflictsViewModel : ObservableRecipient
 
 
     }
-
-    // TODO refactor this shit
 
     /// <summary>
     /// Populate conflicts view when a record is selected
