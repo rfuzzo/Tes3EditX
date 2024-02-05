@@ -5,31 +5,27 @@ name: Check PR
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
-        
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore -c Release
-      
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        path: Tes3EditX.Winui\bin\x64\Release
- 
-   
-   
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          path: Tes3EditX.Winui\bin\x64\Release

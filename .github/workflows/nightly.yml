@@ -5,38 +5,36 @@ name: nightly
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: windows-latest
     permissions:
       contents: write
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
-        
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore -c Release
-    - name: zip folder
-      run: Compress-Archive -Path Tes3EditX.Winui\bin\x64\Release -DestinationPath Release.zip 
-      
-    # Update tag and pre-release
-    - uses: ncipollo/release-action@v1
-      with:
-        artifacts: "Release.zip"
-        tag: "nightly"
-        allowUpdates: true
-        removeArtifacts: true
-        omitBodyDuringUpdate: true
-        prerelease: true
-   
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+      - name: zip folder
+        run: Compress-Archive -Path Tes3EditX.Winui\bin\x64\Release -DestinationPath Release.zip
+
+      # Update tag and pre-release
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "Release.zip"
+          tag: "nightly"
+          allowUpdates: true
+          removeArtifacts: true
+          omitBodyDuringUpdate: true
+          prerelease: true
