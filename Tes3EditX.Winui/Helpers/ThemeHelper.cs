@@ -1,8 +1,5 @@
-﻿using System;
-using Windows.Storage;
-using Microsoft.UI;
-using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
+using Tes3EditX.Backend.Services;
 using Tes3EditX.Winui;
 
 namespace AppUIBasics.Helper
@@ -12,7 +9,6 @@ namespace AppUIBasics.Helper
     /// </summary>
     public static class ThemeHelper
     {
-        private const string SelectedAppThemeKey = "SelectedAppTheme";
 
         /// <summary>
         /// Gets the current actual theme of the app based on the requested theme of the
@@ -64,33 +60,21 @@ namespace AppUIBasics.Helper
                     }
                 }
 
-                if (NativeHelper.IsAppPackaged)
-                {
-                    ApplicationData.Current.LocalSettings.Values[SelectedAppThemeKey] = value.ToString();
-                }
+                // TODO save to settings?
+
             }
         }
 
-        public static void Initialize()
+        public static void Initialize(ISettingsService settings)
         {
-            if (NativeHelper.IsAppPackaged)
-            {
-                string savedTheme = ApplicationData.Current.LocalSettings.Values[SelectedAppThemeKey]?.ToString();
-
-                if (savedTheme != null)
-                {
-                    RootTheme = App.GetEnum<ElementTheme>(savedTheme);
-                }
-            }
+            RootTheme = App.GetEnum<ElementTheme>(settings.Theme);
         }
 
         public static bool IsDarkTheme()
         {
-            if (RootTheme == ElementTheme.Default)
-            {
-                return Application.Current.RequestedTheme == ApplicationTheme.Dark;
-            }
-            return RootTheme == ElementTheme.Dark;
+            return RootTheme == ElementTheme.Default
+                ? Application.Current.RequestedTheme == ApplicationTheme.Dark
+                : RootTheme == ElementTheme.Dark;
         }
     }
 }

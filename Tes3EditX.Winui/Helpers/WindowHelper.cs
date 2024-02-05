@@ -53,7 +53,7 @@ namespace AppUIBasics.Helper
             return AppWindow.GetFromWindowId(wndId);
         }
 
-        static public Window GetWindowForElement(UIElement element)
+        static public Window? GetWindowForElement(UIElement element)
         {
             if (element.XamlRoot != null)
             {
@@ -87,18 +87,6 @@ namespace AppUIBasics.Helper
 
         static private List<Window> _activeWindows = new List<Window>();
 
-        static public StorageFolder GetAppLocalFolder()
-        {
-            StorageFolder localFolder;
-            if (!NativeHelper.IsAppPackaged)
-            {
-                localFolder = Task.Run(async () => await StorageFolder.GetFolderFromPathAsync(System.AppContext.BaseDirectory)).Result;
-            }
-            else
-            {
-                localFolder = ApplicationData.Current.LocalFolder;
-            }
-            return localFolder;
-        }
+        
     }
 }

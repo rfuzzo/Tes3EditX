@@ -27,7 +27,7 @@ public class NavigationService : INavigationService
             : "//Main/Select");
     }
 
-    public async Task NavigateToAsync(string route, IDictionary<string, object> routeParameters = null)
+    public async Task NavigateToAsync(string route, IDictionary<string, object>? routeParameters = null)
     {
         if (string.IsNullOrEmpty(route))
         {

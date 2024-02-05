@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ public sealed partial class MainWindow : Window
         this.InitializeComponent();
     }
 
-    public MainViewModel ViewModel => App.Current.Services.GetService<MainViewModel>();
+    public MainViewModel ViewModel => App.Current.Services.GetRequiredService<MainViewModel>();
 
     public NavigationView NavigationView => NavigationViewControl;
 
@@ -68,8 +69,8 @@ public sealed partial class MainWindow : Window
     // Please call this function rather than rootFrame.Navigate to navigate the rootFrame.
     public void Navigate(
         Type pageType,
-        object targetPageArguments = null,
-        Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo navigationTransitionInfo = null)
+        object? targetPageArguments = null,
+        NavigationTransitionInfo? navigationTransitionInfo = null)
     {
         var args = new NavigationRootPageArgs
         {
@@ -82,6 +83,6 @@ public sealed partial class MainWindow : Window
     public class NavigationRootPageArgs
     {
         //public NavigationRootPage NavigationRootPage;
-        public object Parameter;
+        public object? Parameter;
     }
 }

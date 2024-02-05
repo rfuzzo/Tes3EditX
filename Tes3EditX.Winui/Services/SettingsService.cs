@@ -1,47 +1,53 @@
 ﻿using AppUIBasics.Helper;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using Tes3EditX.Backend.Services;
 using Windows.ApplicationModel;
+using Windows.Storage;
 
 namespace Tes3EditX.Winui.Services;
 
 public class SettingsService : ISettingsService
 {
-    public static string WDIR = "WDIR";
-
-    public string Name => AppInfo.Current.Package.DisplayName;
-
-    public string VersionString => string.Format("Version: {0}.{1}.{2}.{3}",
-                    Package.Current.Id.Version.Major,
-                    Package.Current.Id.Version.Minor,
-                    Package.Current.Id.Version.Build,
-                    Package.Current.Id.Version.Revision);
-
-    public DirectoryInfo GetWorkingDirectory()
+    public int MinConflicts
     {
-        //return Preferences.Default.Get(WDIR, new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory));
+        get => Get(2); 
+        set
+        {
+            Set(value);
+        }
+    }
+    public bool CullConflicts { get => Get(false); set => Set(value); }
+    public string Theme { get => Get("Dark"); set => Set(value); }
+
+    public static T Get<T>(T defaultValue, [CallerMemberName] string? key = null) where T : notnull
+    {
         if (NativeHelper.IsAppPackaged)
         {
-            return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            var obj = ApplicationData.Current.LocalSettings.Values[key];
+            if (obj is T value)
+            {
+                return value;
+            }
         }
         else
         {
-            return new DirectoryInfo(Directory.GetCurrentDirectory());
+            throw new NotImplementedException();
         }
-        
+
+        return defaultValue is null ? default! : defaultValue;
     }
 
-    public void SetWorkingDirectory(DirectoryInfo value)
+    public static void Set<T>(T value, [CallerMemberName] string? key = null)
     {
-        //Preferences.Default.Set(WDIR, value);
+        if (NativeHelper.IsAppPackaged)
+        {
+            ApplicationData.Current.LocalSettings.Values[key] = value;
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
     }
-
-    public int MinConflicts { get; set; } = 2;
-
-    public bool CullConflicts { get; set; } = false;
 }

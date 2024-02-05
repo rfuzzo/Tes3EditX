@@ -16,11 +16,11 @@ namespace Tes3EditX.Winui.Helpers
     {
         // Define the (currently empty) data templates to return
         // These will be "filled-in" in the XAML code.
-        public DataTemplate StringTemplate { get; set; }
+        public DataTemplate? StringTemplate { get; set; }
 
-        public DataTemplate FieldDataTemplate { get; set; }
+        public DataTemplate? FieldDataTemplate { get; set; }
 
-        protected override DataTemplate SelectTemplateCore(object item)
+        protected override DataTemplate? SelectTemplateCore(object item)
         {
             // Return the correct data template based on the item's type.
             if (item.GetType() == typeof(string))
@@ -40,9 +40,9 @@ namespace Tes3EditX.Winui.Helpers
 
     public class RecordViewTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate Common { get; set; }
+        public DataTemplate? Common { get; set; }
 
-        protected override DataTemplate SelectTemplateCore(object value)
+        protected override DataTemplate? SelectTemplateCore(object value)
         {
             return Common;
         }

@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace AppUIBasics.Helper
 {
@@ -42,6 +43,20 @@ namespace AppUIBasics.Helper
                 }
                 return isPackaged;
             }
+        }
+
+        static public StorageFolder GetAppLocalFolder()
+        {
+            StorageFolder localFolder;
+            if (!NativeHelper.IsAppPackaged)
+            {
+                localFolder = Task.Run(async () => await StorageFolder.GetFolderFromPathAsync(System.AppContext.BaseDirectory)).Result;
+            }
+            else
+            {
+                localFolder = ApplicationData.Current.LocalFolder;
+            }
+            return localFolder;
         }
     }
 }

@@ -12,6 +12,8 @@
     <EnableMsixTooling>true</EnableMsixTooling>
 	<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 
+	  <Nullable>enable</Nullable>
+
 	<WindowsPackageType>None</WindowsPackageType>
 	<!-- This bundles the .NET Core libraries -->
 	<SelfContained>true</SelfContained>
@@ -39,9 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230502000" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231219000" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.2428" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 

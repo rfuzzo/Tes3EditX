@@ -22,6 +22,7 @@ using AppUIBasics.Helper;
 using System.Reflection;
 using Tes3EditX.Winui.Pages;
 using Tes3EditX.Backend.ViewModels;
+using System.Diagnostics.CodeAnalysis;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -56,16 +57,17 @@ public partial class App : Application
 
     private void EnsureWindow()
     {
-        ThemeHelper.Initialize();
+        ThemeHelper.Initialize(Services.GetRequiredService<ISettingsService>());
 
-        MainRoot = StartupWindow.Content as FrameworkElement;
+        MainRoot = (FrameworkElement)StartupWindow.Content;
 
-        (StartupWindow as MainWindow).Navigate(typeof(ComparePage), "");
+        (StartupWindow as MainWindow)?.Navigate(typeof(ComparePage), "");
 
         // Ensure the current window is active
         StartupWindow.Activate();
     }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     // Get the initial window created for this app
     // On UWP, this is simply Window.Current
     // On Desktop, multiple Windows may be created, and the StartupWindow may have already
@@ -73,6 +75,7 @@ public partial class App : Application
     public static Window StartupWindow { get; private set; }
 
     public static FrameworkElement MainRoot { get; private set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public static new App Current => (App)Application.Current;
 
@@ -120,5 +123,21 @@ public partial class App : Application
         return !typeof(TEnum).GetTypeInfo().IsEnum
             ? throw new InvalidOperationException("Generic parameter 'TEnum' must be an enum.")
             : (TEnum)Enum.Parse(typeof(TEnum), text);
+    }
+
+    public string Name => AppInfo.Current.Package.DisplayName;
+
+    public string VersionString => string.Format("Version: {0}.{1}.{2}.{3}",
+                    Package.Current.Id.Version.Major,
+                    Package.Current.Id.Version.Minor,
+                    Package.Current.Id.Version.Build,
+                    Package.Current.Id.Version.Revision);
+
+    public DirectoryInfo GetWorkingDirectory()
+    {
+        return NativeHelper.IsAppPackaged
+            ? new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
+            : new DirectoryInfo(Directory.GetCurrentDirectory());
+
     }
 }

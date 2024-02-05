@@ -16,6 +16,7 @@ using AppUIBasics.Helper;
 using Microsoft.UI;
 using Microsoft.Extensions.DependencyInjection;
 using Tes3EditX.Backend.ViewModels;
+using Tes3EditX.Winui.Helpers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -40,46 +41,47 @@ namespace Tes3EditX.Winui.Pages
 
         private void OnSettingsPageLoaded(object sender, RoutedEventArgs e)
         {
-            var currentTheme = ThemeHelper.RootTheme.ToString();
-            //ThemePanel.Children.Cast<RadioButton>().FirstOrDefault(c => c?.Tag?.ToString() == currentTheme).IsChecked = true;
-
-            // set defaults
-            //installerToggle.IsOn = SettingsHelper.GetUseZipInstallers();
+            var currentTheme = ThemeHelper.RootTheme;
+            switch (currentTheme)
+            {
+                case ElementTheme.Light:
+                    themeMode.SelectedIndex = 0;
+                    break;
+                case ElementTheme.Dark:
+                    themeMode.SelectedIndex = 1;
+                    break;
+                case ElementTheme.Default:
+                    themeMode.SelectedIndex = 2;
+                    break;
+            }
         }
 
-        private void OnThemeRadioButtonChecked(object sender, RoutedEventArgs e)
+        private void themeMode_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            var selectedTheme = ((RadioButton)sender)?.Tag?.ToString();
-
-            var res = Microsoft.UI.Xaml.Application.Current.Resources;
-            void SetTitleBarButtonForegroundColor(Windows.UI.Color color) => res["WindowCaptionForeground"] = color;
-
-            if (selectedTheme != null)
+            var selectedTheme = ((ComboBoxItem)themeMode.SelectedItem)?.Tag?.ToString();
+            var window = WindowHelper.GetWindowForElement(this);
+            string color;
+            if (window is not null && selectedTheme is not null)
             {
                 ThemeHelper.RootTheme = App.GetEnum<ElementTheme>(selectedTheme);
                 if (selectedTheme == "Dark")
                 {
-                    SetTitleBarButtonForegroundColor(Colors.White);
+                    TitleBarHelper.SetCaptionButtonColors(window, Colors.White);
+                    color = selectedTheme;
                 }
                 else if (selectedTheme == "Light")
                 {
-                    SetTitleBarButtonForegroundColor(Colors.Black);
+                    TitleBarHelper.SetCaptionButtonColors(window, Colors.Black);
+                    color = selectedTheme;
                 }
                 else
                 {
-                    if (Application.Current.RequestedTheme == ApplicationTheme.Dark)
-                    {
-                        SetTitleBarButtonForegroundColor(Colors.White);
-                    }
-                    else
-                    {
-                        SetTitleBarButtonForegroundColor(Colors.Black);
-                    }
+                    color = TitleBarHelper.ApplySystemThemeToCaptionButtons(window) == Colors.White ? "Dark" : "Light";
                 }
+                // announce visual change to automation
+                //UIHelper.AnnounceActionForAccessibility(sender as UIElement, $"Theme changed to {color}",
+                //                                                                "ThemeChangedNotificationActivityId");
             }
-            var window = WindowHelper.GetWindowForElement(this);
-            //TitleBarHelper.triggerTitleBarRepaint(window);
-
         }
 
         private void installerToggle_Toggled(object sender, RoutedEventArgs e)
