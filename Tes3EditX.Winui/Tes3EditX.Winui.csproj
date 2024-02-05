@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <RootNamespace>Tes3EditX.Winui</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -10,20 +10,24 @@
     <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-	<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-	  <Version>1.0.0</Version>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <Version>1.1.0</Version>
 
-	  <Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
 
-	<WindowsPackageType>None</WindowsPackageType>
-	<!-- This bundles the .NET Core libraries -->
-	<SelfContained>true</SelfContained>
-	<!-- This bundles the WinUI3 components -->
-	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-	<GenerateSatelliteAssembliesForCore>false</GenerateSatelliteAssembliesForCore>
-	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <WindowsPackageType>None</WindowsPackageType>
+    <!-- This bundles the .NET Core libraries -->
+    <SelfContained>true</SelfContained>
+    <!-- This bundles the WinUI3 components -->
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <GenerateSatelliteAssembliesForCore>false</GenerateSatelliteAssembliesForCore>
+    <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	<PublishSingleFile>true</PublishSingleFile>
+	 
   </PropertyGroup>
-  
+
   <ItemGroup>
     <None Remove="Pages\ComparePage.xaml" />
     <None Remove="Pages\ComparePluginPage.xaml" />
