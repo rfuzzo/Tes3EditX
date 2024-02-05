@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using System.Collections.Generic;
+using System.Linq;
 using Tes3EditX.Backend.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using TES3Lib.Records;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -44,14 +35,14 @@ public sealed partial class ComparePluginPage : Page
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // deactivate
-        foreach (var item in e.RemovedItems)
+        foreach (object? item in e.RemovedItems)
         {
             if (item is PluginItemViewModel vm)
             {
                 vm.Enabled = false;
             }
         }
-        foreach (var item in e.AddedItems)
+        foreach (object? item in e.AddedItems)
         {
             if (item is PluginItemViewModel vm)
             {
@@ -64,34 +55,34 @@ public sealed partial class ComparePluginPage : Page
         {
             if ((bool)activateMastersButton.IsChecked)
             {
-                var toActivate = new List<string>();
-                foreach (var item in e.AddedItems)
+                List<string> toActivate = new();
+                foreach (object? item in e.AddedItems)
                 {
                     if (item is PluginItemViewModel vm)
                     {
-                        var header = vm.Plugin.Records.FirstOrDefault(x => x.Name == "TES3");
-                        if (header is not null && header is TES3 tes3)
+                        TES3Lib.Base.Record? header = vm.Plugin.Records.FirstOrDefault(x => x.Name == "TES3");
+                        if (header is not null and TES3 tes3)
                         {
-                            var masters = tes3.Masters.ToList();
-                            foreach (var (master, _) in masters)
+                            List<(TES3Lib.Subrecords.TES3.MAST MAST, TES3Lib.Subrecords.TES3.DATA DATA)> masters = tes3.Masters.ToList();
+                            foreach ((TES3Lib.Subrecords.TES3.MAST master, TES3Lib.Subrecords.TES3.DATA _) in masters)
                             {
-                                var m = master.Filename;
+                                string m = master.Filename;
                                 toActivate.Add(m.TrimEnd('\0'));
                             }
                         }
                     }
                 }
 
-                foreach (var item in toActivate)
+                foreach (string item in toActivate)
                 {
-                    var x = ViewModel.PluginsDisplay.FirstOrDefault(x => x.Name == item);
+                    PluginItemViewModel? x = ViewModel.PluginsDisplay.FirstOrDefault(x => x.Name == item);
                     if (x is not null)
                     {
-                        var i = ViewModel.PluginsDisplay.IndexOf(x);
+                        int i = ViewModel.PluginsDisplay.IndexOf(x);
                         listview.SelectRange(new ItemIndexRange(i, 1));
                     }
 
-                    var y = ViewModel.PluginsList.FirstOrDefault(x => x.Name == item);
+                    PluginItemViewModel? y = ViewModel.PluginsList.FirstOrDefault(x => x.Name == item);
                     if (y is not null)
                     {
                         y.Enabled = true;
@@ -99,12 +90,6 @@ public sealed partial class ComparePluginPage : Page
                 }
             }
         }
-
-        // sort them again
-        //ViewModel.SelectedPlugins = listview.SelectedItems
-        //    .Cast<PluginItemViewModel>()
-        //    .OrderBy(x => x.Info.Extension.ToLower()).ThenBy(x => x.Info.LastWriteTime)
-        //    .ToList();
     }
 
     private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -116,9 +101,9 @@ public sealed partial class ComparePluginPage : Page
         }
 
         // select items
-        foreach (var x in ViewModel.PluginsDisplay.Where(x => x.Enabled))
+        foreach (PluginItemViewModel? x in ViewModel.PluginsDisplay.Where(x => x.Enabled))
         {
-            var i = ViewModel.PluginsDisplay.IndexOf(x);
+            int i = ViewModel.PluginsDisplay.IndexOf(x);
             listview.SelectRange(new ItemIndexRange(i, 1));
         }
     }

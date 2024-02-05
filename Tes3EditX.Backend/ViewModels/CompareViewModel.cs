@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,6 +19,13 @@ namespace Tes3EditX.Backend.ViewModels
             NotificationService = notificationService as NotificationService;
         }
 
-      
+        [ObservableProperty]
+        private bool _isPaneOpen = true;
+
+        [RelayCommand]
+        private void TogglePane()
+        {
+            IsPaneOpen = !IsPaneOpen;
+        }
     }
 }

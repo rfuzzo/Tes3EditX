@@ -23,7 +23,7 @@
                 Text="Settings" />
 
             <TextBlock
-                Margin="0,12,0,"
+                Margin="0,12,0,5"
                 Style="{StaticResource BaseTextBlockStyle}"
                 Text="{x:Bind ViewModel.Name}" />
 

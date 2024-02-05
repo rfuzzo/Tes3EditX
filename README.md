@@ -4,11 +4,25 @@
 
 TES3 plugin Conflict viewer.
 
-## Download
->
-> Github action artifacts are uploaded on each successful commit
+## Features
 
-[Latest dev release on GitHub](https://github.com/rfuzzo/Tes3EditX/releases/tag/nightly)
+- Selectable plugins
+- Conflict highlighting
+
+## Download
+
+- Download the latest release below
+- Extract to a folder of your choice
+- Select your Morrowind Data Files directory
+- Or run through MO2 from Data Files directly
+
+### Stable
+
+➡️[Latest stable release on GitHub](https://github.com/rfuzzo/Tes3EditX/releases/latest)
+
+### Development versions
+
+🚧[Latest dev release on GitHub](https://github.com/rfuzzo/Tes3EditX/releases/tag/nightly)
 
 ## Build locally
 >
@@ -20,6 +34,7 @@ TES3 plugin Conflict viewer.
 
 ## Screenshots
 
+![screenshot](/assets/Screenshot%202024-02-05%20112025.png)
 ![screenshot](/assets/Screenshot%202023-08-02%20171546.png)
 
 ## Credits
