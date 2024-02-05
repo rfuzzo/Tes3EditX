@@ -31,6 +31,8 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
+
+        ExtendsContentIntoTitleBar = true;
     }
 
     public MainViewModel ViewModel => App.Current.Services.GetRequiredService<MainViewModel>();

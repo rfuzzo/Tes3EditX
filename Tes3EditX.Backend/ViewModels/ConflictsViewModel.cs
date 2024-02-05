@@ -1,13 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reflection;
 using Tes3EditX.Backend.Extensions;
 using Tes3EditX.Backend.Models;
 using Tes3EditX.Backend.Services;
-using TES3Lib.Base;
+using Tes3EditX.Backend.ViewModels.ItemViewModels;
 
 namespace Tes3EditX.Backend.ViewModels;
 
@@ -19,7 +17,7 @@ public partial class ConflictsViewModel : ObservableRecipient
 
 
     // Record Select View
-    private readonly List<RecordItemViewModel> _records = new();
+    private readonly List<RecordItemViewModel> _records = [];
 
     [ObservableProperty]
     private ObservableCollection<GroupInfoList> _groupedRecords;
@@ -38,7 +36,7 @@ public partial class ConflictsViewModel : ObservableRecipient
     // Conflicts view
 
     [ObservableProperty]
-    private ObservableCollection<ConflictRecordFieldViewModel> _fields = new();
+    private ObservableCollection<ConflictRecordFieldViewModel> _fields = [];
 
     public ConflictsViewModel(
         INavigationService navigationService,
@@ -50,7 +48,7 @@ public partial class ConflictsViewModel : ObservableRecipient
         _settingsService = settingsService;
 
         // init
-        GroupedRecords = new();
+        GroupedRecords = [];
         Tags = new ObservableCollection<string>(Tes3Extensions.GetAllTags().Order());
 
         RegenerateRecords(_compareService.Conflicts);
@@ -71,7 +69,7 @@ public partial class ConflictsViewModel : ObservableRecipient
     public void RegenerateRecords(Dictionary<RecordId, List<FileInfo>> conflicts)
     {
         _records.Clear();
-        foreach ((var id, List<FileInfo> plugins) in conflicts)
+        foreach ((RecordId? id, List<FileInfo> plugins) in conflicts)
         {
             _records.Add(new RecordItemViewModel(id.Tag, id.EditorId, plugins));
         }
@@ -121,18 +119,15 @@ public partial class ConflictsViewModel : ObservableRecipient
     /// <param name="value"></param>
     partial void OnSelectedRecordChanged(object? value)
     {
-        if (value is not RecordItemViewModel recordViewModel)
+        if (value is not RecordItemViewModel recordItemViewModel)
         {
             return;
         }
 
-        var recordId = recordViewModel.GetUniqueId();
-        var names = _compareService.GetNames(recordViewModel.Tag);
-        var conflicts = _compareService.GetConflictMap(recordViewModel.Plugins, recordId, names);
-
-        // dbg
-        //var b = _compareService.HasAnyConflict(recordId, recordViewModel.Plugins);
-
+        var recordId = recordItemViewModel.GetUniqueId();
+        var names = _compareService.GetNames(recordItemViewModel.Tag);
+        var conflicts = _compareService.GetConflictMap(recordItemViewModel.Plugins, recordId, names);
+      
         // -----------------------------------------
         // loop again to get field equality
         CompareService.SetConflictStatus(conflicts);
@@ -140,26 +135,25 @@ public partial class ConflictsViewModel : ObservableRecipient
         // -----------------------------------------
         // transform to vertical layout
         Fields.Clear();
-        Fields.Add(new("Plugins", conflicts.Select(x => x.Item1).Cast<object>().ToList()));
+        Fields.Add(new("Plugins", conflicts.Select(x => x.Item1).Cast<object>().ToList(), false));
         foreach (var name in names)
         {
+            var hasConflict = false;
             List<object> list = new();
-            foreach (var c in conflicts)
+            foreach (var (_, recordFieldViewModels) in conflicts)
             {
-                var f = c.Item2.FirstOrDefault(x => x.Name.Equals(name));
-                if (f is not null)
+                var recordFieldViewModel = recordFieldViewModels.FirstOrDefault(x => x.Name.Equals(name));
+                if (recordFieldViewModel is not null)
                 {
-                    list.Add(f);
+                    list.Add(recordFieldViewModel);
+                    hasConflict = hasConflict | recordFieldViewModel.IsConflict;
                 }
             }
 
-            Fields.Add(new ConflictRecordFieldViewModel(name, list));
+            Fields.Add(new ConflictRecordFieldViewModel(name, list, hasConflict));
         }
 
     }
-
-   
-
 
     partial void OnSelectedTagChanged(string value)
     {
@@ -172,8 +166,8 @@ public partial class ConflictsViewModel : ObservableRecipient
         FilterRecords();
     }
 
-    
 
-    
+
+
 
 }

@@ -19,4 +19,19 @@ namespace Tes3EditX.Winui.Helpers
             throw new NotImplementedException();
         }
     }
+
+    public class BooleanToColorConverterFieldName : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (value is bool v && v)
+                ? new SolidColorBrush(Colors.Orange)
+                : new SolidColorBrush(Colors.CornflowerBlue);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

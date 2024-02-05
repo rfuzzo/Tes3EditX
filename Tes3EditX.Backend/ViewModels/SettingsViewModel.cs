@@ -33,4 +33,9 @@ public partial class SettingsViewModel : ObservableObject
     {
         _settingsService.MinConflicts = value;
     }
+
+    public void SetTheme(string color)
+    {
+        _settingsService.Theme = color;
+    }
 }

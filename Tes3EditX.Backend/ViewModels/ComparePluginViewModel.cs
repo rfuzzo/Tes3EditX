@@ -45,7 +45,7 @@ public partial class ComparePluginViewModel : ObservableObject
         _settingsService = settingsService;
         _folderPicker = folderPicker;
 
-        FolderPath = settingsService.GetWorkingDirectory();
+        FolderPath = _settingsService.GetWorkingDirectory();
     }
 
 

@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:Tes3EditX.Winui.Helpers"
     xmlns:interfaces="using:TES3Lib.Interfaces"
+    xmlns:itemviewmodels="using:Tes3EditX.Backend.ViewModels.ItemViewModels"
     xmlns:local="using:Tes3EditX.Winui.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Tes3EditX.Backend.Models"
@@ -41,6 +42,7 @@
         </DataTemplate>-->
 
         <helpers:BooleanToColorConverter x:Key="ColorConverter" />
+        <helpers:BooleanToColorConverterFieldName x:Key="ColorConverterFieldName" />
 
         <!--  read only  -->
         <DataTemplate x:Key="CommonTemplate" x:DataType="viewmodels:RecordFieldViewModel">
@@ -74,7 +76,7 @@
 
         <!--  Item Repeaters  -->
 
-        <DataTemplate x:Key="CategoryTemplate" x:DataType="viewmodels:ConflictRecordFieldViewModel">
+        <DataTemplate x:Key="CategoryTemplate" x:DataType="itemviewmodels:ConflictRecordFieldViewModel">
             <StackPanel Orientation="Horizontal">
                 <TextBlock
                     Width="200"
@@ -82,7 +84,7 @@
                     VerticalAlignment="Top"
                     FontStyle="Italic"
                     FontWeight="Light"
-                    Foreground="CornflowerBlue"
+                    Foreground="{x:Bind HasConflict, Mode=OneWay, Converter={StaticResource ColorConverterFieldName}}"
                     Text="{x:Bind FieldName}" />
 
                 <ItemsRepeater

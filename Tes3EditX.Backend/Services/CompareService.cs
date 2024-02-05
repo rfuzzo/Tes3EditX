@@ -2,28 +2,22 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Tes3EditX.Backend.Extensions;
 using Tes3EditX.Backend.Models;
 using Tes3EditX.Backend.ViewModels;
 using TES3Lib;
 using TES3Lib.Base;
-using TES3Lib.Subrecords.Shared;
 
 namespace Tes3EditX.Backend.Services;
 
 public partial class CompareService : ObservableObject, ICompareService
 {
-    public Dictionary<FileInfo,TES3> Plugins { get; } = new();
+    public Dictionary<FileInfo, TES3> Plugins { get; } = [];
 
     [ObservableProperty]
-    private Dictionary<RecordId, List<FileInfo>> _conflicts = new();
+    private Dictionary<RecordId, List<FileInfo>> _conflicts = [];
 
     private readonly INotificationService _notificationService;
     private readonly ISettingsService _settingsService;
@@ -51,31 +45,31 @@ public partial class CompareService : ObservableObject, ICompareService
 
         // map plugin records
 
-        var pluginMap = new Dictionary<FileInfo, HashSet<RecordId>>();
-        foreach (var model in Selectedplugins)
+        Dictionary<FileInfo, HashSet<RecordId>> pluginMap = [];
+        foreach (PluginItemViewModel model in Selectedplugins)
         {
-            var plugin = model.Plugin;
-            var records = plugin.Records
+            TES3 plugin = model.Plugin;
+            HashSet<RecordId> records = plugin.Records
                 .Where(x => x is not null)
                 .Select(x => x.GetUniqueId())
                 .ToHashSet();
 
-            
+
             pluginMap.Add(model.Info, records);
             Plugins.Add(model.Info, plugin);
         }
 
         // map of record ids and according plugin paths
-        Dictionary<RecordId, List<FileInfo>> conflict_map = new();
-        foreach (var (pluginKey, records) in pluginMap)
+        Dictionary<RecordId, List<FileInfo>> conflict_map = [];
+        foreach ((FileInfo pluginKey, HashSet<RecordId> records) in pluginMap)
         {
-            List<RecordId> newrecords = new();
-            foreach (var record in records)
+            List<RecordId> newrecords = [];
+            foreach (RecordId record in records)
             {
                 // then we have a conflict
-                if (conflict_map.ContainsKey(record))
+                if (conflict_map.TryGetValue(record, out List<FileInfo>? value))
                 {
-                    conflict_map[record].Add(pluginKey);
+                    value.Add(pluginKey);
                 }
                 // no conflict, store for later adding
                 else
@@ -84,17 +78,17 @@ public partial class CompareService : ObservableObject, ICompareService
                 }
             }
 
-            foreach (var item in newrecords)
+            foreach (RecordId item in newrecords)
             {
-                conflict_map.Add(item, new() { pluginKey });
+                conflict_map.Add(item, [pluginKey]);
             }
         }
 
         // TODO dedup?
         // remove single entries (no conflicts)
         // a true conflict is only at > 2 conflicting entries
-        var singleRecords = conflict_map.Where(x => x.Value.Count < _settingsService.MinConflicts).Select(x => x.Key);
-        foreach (var item in singleRecords)
+        IEnumerable<RecordId> singleRecords = conflict_map.Where(x => x.Value.Count < _settingsService.MinConflicts).Select(x => x.Key);
+        foreach (RecordId? item in singleRecords)
         {
             conflict_map.Remove(item);
         }
@@ -106,21 +100,18 @@ public partial class CompareService : ObservableObject, ICompareService
 
         // check for false positives
         // TODO why is that necessary?
-
-
         if (_settingsService.CullConflicts)
         {
 
-            var toRemove = new List<RecordId>();
+            List<RecordId> toRemove = [];
 
-            var stopwatch = Stopwatch.StartNew();
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
 #if PARALLEL
-            var progress = new Progress<int>(_ => _notificationService.Progress++) as IProgress<int>;
+            IProgress<int> progress = new Progress<int>(_ => _notificationService.Progress++);
 
             await Parallel.ForEachAsync(conflict_map, async (item, token) =>
             {
-                //await Task.Run(() => CheckForConflict(toRemove, item.Key, item.Value));
                 if (!HasAnyConflict(item.Key, item.Value))
                 {
                     toRemove.Add(item.Key);
@@ -144,7 +135,7 @@ public partial class CompareService : ObservableObject, ICompareService
             _notificationService.Text = stopwatch.Elapsed.TotalSeconds.ToString();
             _notificationService.Enabled = true;
 
-            foreach (var item in toRemove)
+            foreach (RecordId item in toRemove)
             {
                 conflict_map.Remove(item);
             }
@@ -153,20 +144,23 @@ public partial class CompareService : ObservableObject, ICompareService
 
         Conflicts = conflict_map;
 
+#if !PARALLEL
         await Task.CompletedTask;
+#endif
+
     }
 
     public bool HasAnyConflict(RecordId key, List<FileInfo> plugins)
     {
-        var tag = key.Tag;
-        var records = new List<Record>();
-        foreach (var pluginPath in plugins)
+        string tag = key.Tag;
+        List<Record> records = new();
+        foreach (FileInfo pluginPath in plugins)
         {
             // get plugin
-            if (Plugins.TryGetValue(pluginPath, out var plugin))
+            if (Plugins.TryGetValue(pluginPath, out TES3? plugin))
             {
                 // get record
-                var record = plugin.Records.FirstOrDefault(x => x is not null && x.GetUniqueId() == key);
+                Record? record = plugin.Records.FirstOrDefault(x => x is not null && x.GetUniqueId() == key);
                 if (record is not null)
                 {
                     records.Add(record);
@@ -175,13 +169,13 @@ public partial class CompareService : ObservableObject, ICompareService
         }
 
         // check for equality
-        var isConflict = false;
+        bool isConflict = false;
         for (int i = 0; i < records.Count; i++)
         {
-            var r = records[i];
+            Record r = records[i];
             for (int j = i + 1; j < records.Count; j++)
             {
-                var r2 = records[j];
+                Record r2 = records[j];
                 if (!r.DeepEquals(r2))
                 {
                     isConflict = true;
@@ -208,10 +202,10 @@ public partial class CompareService : ObservableObject, ICompareService
     public List<string> GetNames(string tag)
     {
         // get the first record object that matches the tag
-        var record = Plugins.Values.SelectMany(x => x.Records).FirstOrDefault(x => x.Name.Equals(tag));
+        Record? record = Plugins.Values.SelectMany(x => x.Records).FirstOrDefault(x => x.Name.Equals(tag));
         if (record is not null)
         {
-            var instance = (Record?)Activator.CreateInstance(record.GetType()!);
+            Record? instance = (Record?)Activator.CreateInstance(record.GetType()!);
             return instance!.GetPropertyNames();
         }
 
@@ -222,16 +216,16 @@ public partial class CompareService : ObservableObject, ICompareService
     public List<(string, List<RecordFieldViewModel>)> GetConflictMap(List<FileInfo> plugins, RecordId recordId, List<string> names)
     {
         // fields by plugin
-        var conflictsMap = new List<(string, List<RecordFieldViewModel>)>();
+        List<(string, List<RecordFieldViewModel>)> conflictsMap = new();
 
         // loop through plugins to get a vm with fields for each plugin
-        foreach (var pluginPath in plugins)
+        foreach (FileInfo pluginPath in plugins)
         {
             // get plugin
-            if (Plugins.TryGetValue(pluginPath, out var plugin))
+            if (Plugins.TryGetValue(pluginPath, out TES3? plugin))
             {
                 // get record
-                var record = plugin.Records.FirstOrDefault(x => x is not null && x.GetUniqueId() == recordId);
+                Record? record = plugin.Records.FirstOrDefault(x => x is not null && x.GetUniqueId() == recordId);
                 if (record is not null)
                 {
                     conflictsMap.Add((pluginPath.Name, GetFieldsOfRecord(record, names)));
@@ -250,26 +244,26 @@ public partial class CompareService : ObservableObject, ICompareService
     /// <returns></returns>
     private static List<RecordFieldViewModel> GetFieldsOfRecord(Record record, List<string> names)
     {
-        Dictionary<string, object?> map = new();
-        List<RecordFieldViewModel> fields = new();
+        Dictionary<string, object?> map = [];
+        List<RecordFieldViewModel> fields = [];
 
-        foreach (var name in names)
+        foreach (string name in names)
         {
             map.Add(name, null);
         }
 
         // get properties with reflection recursively
-        var recordProperties = record.GetType().GetProperties(
+        List<PropertyInfo> recordProperties = record.GetType().GetProperties(
                BindingFlags.Public |
                BindingFlags.Instance |
                BindingFlags.DeclaredOnly).ToList();
         foreach (PropertyInfo prop in recordProperties)
         {
-            var v = prop.GetValue(record);
+            object? v = prop.GetValue(record);
 
             if (v is Subrecord subrecord)
             {
-                var subRecordProperties = subrecord.GetType().GetProperties(
+                List<PropertyInfo> subRecordProperties = subrecord.GetType().GetProperties(
                     BindingFlags.Public |
                     BindingFlags.Instance |
                     BindingFlags.DeclaredOnly).ToList();
@@ -289,7 +283,7 @@ public partial class CompareService : ObservableObject, ICompareService
 
         // fill fields
         // todo to refactor
-        foreach (var (name, field) in map)
+        foreach ((string name, object? field) in map)
         {
             fields.Add(new(field, name));
         }
@@ -303,14 +297,14 @@ public partial class CompareService : ObservableObject, ICompareService
     /// <param name="conflicts"></param>
     public static bool SetConflictStatus(List<(string, List<RecordFieldViewModel>)> conflicts)
     {
-        var anyConflict = false;
+        bool anyConflict = false;
 
-        for (var i = 1; i < conflicts.Count; i++)
+        for (int i = 1; i < conflicts.Count; i++)
         {
-            var c = conflicts[i].Item2;
-            var c_last = conflicts[i - 1].Item2;
+            List<RecordFieldViewModel> c = conflicts[i].Item2;
+            List<RecordFieldViewModel> c_last = conflicts[i - 1].Item2;
 
-            for (var j = 0; j < c.Count; j++)
+            for (int j = 0; j < c.Count; j++)
             {
                 RecordFieldViewModel f = c[j];
                 if (j > c_last.Count)

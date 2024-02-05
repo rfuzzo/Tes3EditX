@@ -13,5 +13,7 @@ public interface ISettingsService
     bool CullConflicts { get; set; }
     string Theme { get; set; }
 
-   
+    string GetName();
+    string GetVersionString();
+    DirectoryInfo GetWorkingDirectory();
 }

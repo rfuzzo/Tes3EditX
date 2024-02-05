@@ -93,7 +93,15 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         // Appservices
-        services.AddSingleton<ISettingsService, SettingsService>();
+        if (NativeHelper.IsAppPackaged)
+        {
+            services.AddSingleton<ISettingsService,SettingsServicePackaged>();
+        }
+        else
+        {
+            services.AddSingleton<ISettingsService>(SettingsServiceUnpackaged.Load());
+        }
+        
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ICompareService, CompareService>();
@@ -125,19 +133,5 @@ public partial class App : Application
             : (TEnum)Enum.Parse(typeof(TEnum), text);
     }
 
-    public string Name => AppInfo.Current.Package.DisplayName;
-
-    public string VersionString => string.Format("Version: {0}.{1}.{2}.{3}",
-                    Package.Current.Id.Version.Major,
-                    Package.Current.Id.Version.Minor,
-                    Package.Current.Id.Version.Build,
-                    Package.Current.Id.Version.Revision);
-
-    public DirectoryInfo GetWorkingDirectory()
-    {
-        return NativeHelper.IsAppPackaged
-            ? new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
-            : new DirectoryInfo(Directory.GetCurrentDirectory());
-
-    }
+    
 }

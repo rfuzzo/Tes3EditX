@@ -61,16 +61,19 @@
             <AppBarButton
                 Click="AppBarButtonSelect_Click"
                 Icon="SelectAll"
-                Label="Select All" />
+                Label="Select All"
+                ToolTipService.ToolTip="Select All" />
             <AppBarButton
                 Click="AppBarButtonClear_Click"
                 Icon="ClearSelection"
-                Label="Clear Selection" />
+                Label="Clear Selection"
+                ToolTipService.ToolTip="Clear Selection" />
             <AppBarToggleButton
                 x:Name="activateMastersButton"
                 Icon="ImportAll"
                 IsChecked="True"
-                Label="Activate Masters" />
+                Label="Activate Masters"
+                ToolTipService.ToolTip="Activate Masters" />
 
 
         </CommandBar>
