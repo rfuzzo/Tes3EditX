@@ -18,6 +18,8 @@ public partial class SettingsViewModel : ObservableObject
 
         CullConflicts = _settingsService.CullConflicts;
         MinConflicts = _settingsService.MinConflicts;
+
+        Name = $"{_settingsService.GetName()} Version: {_settingsService.GetVersionString()}";
     }
 
     [ObservableProperty]
@@ -38,4 +40,7 @@ public partial class SettingsViewModel : ObservableObject
     {
         _settingsService.Theme = color;
     }
+
+    [ObservableProperty]
+    private string _name;
 }

@@ -10,6 +10,26 @@
     mc:Ignorable="d">
 
     <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Padding="56,10,0,20">
+            <TextBlock
+                Margin="0,12,0,5"
+                Style="{StaticResource HeaderTextBlockStyle}"
+                Text="Settings" />
+
+            <TextBlock
+                Margin="0,12,0,"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Text="{x:Bind ViewModel.Name}" />
+
+            <HyperlinkButton Content="Source on github.com" NavigateUri="https://github.com/rfuzzo/Tes3EditX" />
+        </StackPanel>
+
         <ScrollViewer
             x:Name="contentSV"
             Grid.Row="1"
@@ -21,7 +41,7 @@
 
             <StackPanel HorizontalAlignment="Left">
                 <TextBlock
-                    Margin="0,12,0,0"
+                    Margin="0,12,0,12"
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Text="Theme Mode" />
                 <ComboBox
@@ -47,10 +67,9 @@
                         OnContent="Yes" />
 
                     <Slider
-                        Width="200"
                         Margin="0,0,0,4"
                         AutomationProperties.Name="simple slider"
-                        Header="Check conflicts for false positives (slow)"
+                        Header="Minimum amount of conflicts to check for"
                         Maximum="10"
                         Minimum="2"
                         Value="{x:Bind ViewModel.MinConflicts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

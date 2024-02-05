@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using Tes3EditX.Backend.Services;
 using Windows.ApplicationModel;
@@ -12,13 +13,18 @@ namespace Tes3EditX.Winui.Services;
 public partial class SettingsServiceUnpackaged : ObservableObject, ISettingsService
 {
     private const string FileName = "appsettings.json";
-    public string GetName() => AppInfo.Current.Package.DisplayName;
+    public string GetName()
+    {
+        return "Tes3EditX";
+    }
 
-    public string GetVersionString() => string.Format("Version: {0}.{1}.{2}.{3}",
-                    Package.Current.Id.Version.Major,
-                    Package.Current.Id.Version.Minor,
-                    Package.Current.Id.Version.Build,
-                    Package.Current.Id.Version.Revision);
+    public string GetVersionString()
+    {
+        var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+        version ??= "";
+
+        return version;
+    }
 
     public DirectoryInfo GetWorkingDirectory()
     {

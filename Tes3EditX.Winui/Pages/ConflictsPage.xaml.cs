@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Tes3EditX.Backend.ViewModels;
+using Tes3EditX.Backend.ViewModels.ItemViewModels;
+using Windows.ApplicationModel.DataTransfer;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,7 +31,27 @@ public sealed partial class ConflictsPage : Page
             ViewModel.FilterName = textBox.Text;
             ViewModel.FilterRecords();
         }
-       
+
     }
 
+    private void MenuFlyoutItem_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem menu)
+        {
+            if (menu.DataContext is RecordFieldViewModel vm)
+            {
+                DataPackage package = new();
+                package.SetText(vm.Text);
+                Clipboard.SetContent(package);
+            }
+            else if (menu.DataContext is ConflictRecordFieldViewModel cvm)
+            {
+                DataPackage package = new();
+                package.SetText(cvm.FieldName);
+                Clipboard.SetContent(package);
+            }
+
+
+        }
+    }
 }

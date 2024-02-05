@@ -59,7 +59,17 @@
                     FontStyle="Italic"
                     FontWeight="Light"
                     Foreground="{x:Bind HasConflict, Mode=OneWay, Converter={StaticResource ColorConverterFieldName}}"
-                    Text="{x:Bind FieldName}" />
+                    Text="{x:Bind FieldName}">
+                    <TextBlock.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem
+                                Click="MenuFlyoutItem_Click"
+                                DataContext="{x:Bind}"
+                                Icon="Copy"
+                                Text="Copy" />
+                        </MenuFlyout>
+                    </TextBlock.ContextFlyout>
+                </TextBlock>
 
                 <ItemsRepeater
                     x:Name="innerRepeater"
@@ -93,7 +103,19 @@
                 Margin="4"
                 Foreground="{x:Bind IsConflict, Mode=OneWay, Converter={StaticResource ColorConverter}}"
                 Text="{x:Bind Text}"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap">
+
+                <TextBlock.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Click="MenuFlyoutItem_Click"
+                            DataContext="{x:Bind}"
+                            Icon="Copy"
+                            Text="Copy" />
+                    </MenuFlyout>
+                </TextBlock.ContextFlyout>
+
+            </TextBlock>
         </DataTemplate>
 
         <DataTemplate x:Key="StringDataTemplate" x:DataType="x:String">
