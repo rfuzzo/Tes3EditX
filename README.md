@@ -1,4 +1,7 @@
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/rfuzzo/tes3editx/check.yml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/rfuzzo/tes3editx/nightly.yml)
+![GitHub Release](https://img.shields.io/github/v/release/rfuzzo/tes3editx?include_prereleases)
+![GitHub Release](https://img.shields.io/github/v/release/rfuzzo/tes3editx)
+
 
 # Tes3EditX
 
