@@ -107,12 +107,12 @@
         <!--  Toplevel Templates  -->
         <DataTemplate x:Key="FieldDataTemplate" x:DataType="viewmodels:RecordFieldViewModel">
             <Grid>
-                <ContentControl ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}" DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}, Path=DataContext}" />
+                <ContentControl Content="{x:Bind WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="StringDataTemplate" x:DataType="x:String">
-            <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+            <Grid Margin="0,0,0,10" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                 <TextBlock
                     MinWidth="300"
                     MaxWidth="300"

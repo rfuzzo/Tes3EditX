@@ -195,7 +195,7 @@ public partial class CompareService(INotificationService notificationService, IS
     public List<string> GetNames(string tag)
     {
         // get the first record object that matches the tag
-        Record? record = Plugins.Values.SelectMany(x => x.Records).FirstOrDefault(x => x.Name.Equals(tag));
+        Record? record = Plugins.Values.SelectMany(x => x.Records).FirstOrDefault(x => x is not null && x.Name.Equals(tag));
         if (record is not null)
         {
             Record? instance = (Record?)Activator.CreateInstance(record.GetType()!);
