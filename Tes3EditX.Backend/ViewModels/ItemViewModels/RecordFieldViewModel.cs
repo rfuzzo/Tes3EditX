@@ -10,7 +10,7 @@ using TES3Lib.Interfaces;
 
 namespace Tes3EditX.Backend.ViewModels
 {
-    public class RecordFieldViewModel : ObservableObject
+    public partial class RecordFieldViewModel : ObservableObject
     {
         public RecordFieldViewModel(object? wrappedField, string name)
         {
@@ -19,7 +19,8 @@ namespace Tes3EditX.Backend.ViewModels
             Text = ToString();
         }
 
-        public object? WrappedField { get; init; }
+        [ObservableProperty]
+        private object? _wrappedField;
         public string Name { get; }
         public string Text { get; }
         public bool IsConflict { get; set; }

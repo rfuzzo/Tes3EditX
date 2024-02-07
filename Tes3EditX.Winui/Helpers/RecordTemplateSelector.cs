@@ -1,14 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tes3EditX.Backend.ViewModels;
-using TES3Lib.Interfaces;
-using TES3Lib.Subrecords.Shared;
-using Utility;
 
 namespace Tes3EditX.Winui.Helpers
 {
@@ -29,6 +21,7 @@ namespace Tes3EditX.Winui.Helpers
             }
             else if (item.GetType() == typeof(RecordFieldViewModel))
             {
+
                 return FieldDataTemplate;
             }
             else
@@ -46,5 +39,52 @@ namespace Tes3EditX.Winui.Helpers
         {
             return Common;
         }
+    }
+
+    public class WrappedFieldTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate? StringTemplate { get; set; }
+        public DataTemplate? IntegerTemplate { get; set; }
+        public DataTemplate? BooleanTemplate { get; set; }
+        public DataTemplate? GenericTemplate { get; set; }
+
+        protected override DataTemplate? SelectTemplateCore(object value)
+        {
+            return SelectInternal(value);
+        }
+
+        protected override DataTemplate? SelectTemplateCore(object value, DependencyObject container)
+        {
+            return SelectInternal(value);
+        }
+
+        private DataTemplate? SelectInternal(object? value)
+        {
+            if (value is null)
+            {
+                return null;
+            }
+            else
+            {
+                if (value is string)
+                {
+                    return StringTemplate;
+                }
+                else if (value is int)
+                {
+                    return IntegerTemplate;
+                }
+                else if (value is bool)
+                {
+                    return BooleanTemplate;
+                }
+
+                return GenericTemplate;
+            }
+
+
+        }
+
+
     }
 }

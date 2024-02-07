@@ -90,32 +90,25 @@
             </StackPanel>
         </DataTemplate>
 
+
+        <!--  TemplateSelector  -->
         <helpers:StringOrFieldTemplateSelector
             x:Key="StringOrFieldTemplateSelector"
             FieldDataTemplate="{StaticResource FieldDataTemplate}"
             StringTemplate="{StaticResource StringDataTemplate}" />
 
+        <helpers:WrappedFieldTemplateSelector
+            x:Key="WrappedFieldTemplateSelector"
+            BooleanTemplate="{StaticResource BooleanTemplate}"
+            GenericTemplate="{StaticResource GenericTemplate}"
+            IntegerTemplate="{StaticResource IntegerTemplate}"
+            StringTemplate="{StaticResource StringTemplate}" />
 
+        <!--  Toplevel Templates  -->
         <DataTemplate x:Key="FieldDataTemplate" x:DataType="viewmodels:RecordFieldViewModel">
-            <TextBlock
-                MinWidth="300"
-                MaxWidth="300"
-                Margin="4"
-                Foreground="{x:Bind IsConflict, Mode=OneWay, Converter={StaticResource ColorConverter}}"
-                Text="{x:Bind Text}"
-                TextWrapping="Wrap">
-
-                <TextBlock.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem
-                            Click="MenuFlyoutItem_Click"
-                            DataContext="{x:Bind}"
-                            Icon="Copy"
-                            Text="Copy" />
-                    </MenuFlyout>
-                </TextBlock.ContextFlyout>
-
-            </TextBlock>
+            <Grid>
+                <ContentControl ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}" DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}, Path=DataContext}" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="StringDataTemplate" x:DataType="x:String">
@@ -127,10 +120,70 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    Text="{x:Bind Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+
+        <!--  Inner Templates  -->
+        <DataTemplate x:Key="BooleanTemplate" x:DataType="x:Boolean">
+            <Grid>
+                <CheckBox
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    IsChecked="{x:Bind Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GenericTemplate">
+            <Grid>
+                <TextBlock
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    Text="NULL"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="IntegerTemplate" x:DataType="x:Int32">
+            <Grid>
+                <NumberBox
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    LargeChange="10"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Compact"
+                    Value="{x:Bind Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StringTemplate" x:DataType="x:String">
+            <Grid>
+                <TextBox
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
                     Text="{x:Bind}"
                     TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
+
 
 
 
