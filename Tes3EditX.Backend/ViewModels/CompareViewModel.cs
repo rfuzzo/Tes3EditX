@@ -1,11 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tes3EditX.Backend.Services;
 
 namespace Tes3EditX.Backend.ViewModels
@@ -13,10 +7,11 @@ namespace Tes3EditX.Backend.ViewModels
     public partial class CompareViewModel : ObservableObject
     {
         public NotificationService? NotificationService;
-
-        public CompareViewModel(INotificationService notificationService)
+        private readonly ICompareService _compareService;
+        public CompareViewModel(INotificationService notificationService, ICompareService compareService)
         {
             NotificationService = notificationService as NotificationService;
+            _compareService = compareService;
         }
 
         [ObservableProperty]
@@ -26,6 +21,16 @@ namespace Tes3EditX.Backend.ViewModels
         private void TogglePane()
         {
             IsPaneOpen = !IsPaneOpen;
+        }
+
+        [RelayCommand]
+        private void Save()
+        {
+            foreach (var (key, value) in _compareService.Conflicts)
+            {
+                //
+
+            }
         }
     }
 }

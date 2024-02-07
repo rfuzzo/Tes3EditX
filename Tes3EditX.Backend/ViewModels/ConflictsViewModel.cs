@@ -133,11 +133,9 @@ public partial class ConflictsViewModel : ObservableRecipient
         var names = _compareService.GetNames(recordItemViewModel.Tag);
         var conflicts = _compareService.GetConflictMap(recordItemViewModel.Plugins, recordId, names);
       
-        // -----------------------------------------
         // loop again to get field equality
         CompareService.SetConflictStatus(conflicts);
 
-        // -----------------------------------------
         // transform to vertical layout
         Fields.Clear();
         Fields.Add(new("Plugins", conflicts.Select(x => x.Item1).Cast<object>().ToList(), false));

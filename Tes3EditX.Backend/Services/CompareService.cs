@@ -221,7 +221,8 @@ public partial class CompareService(INotificationService notificationService, IS
                 Record? record = plugin.Records.FirstOrDefault(x => x is not null && x.GetUniqueId() == recordId);
                 if (record is not null)
                 {
-                    conflictsMap.Add((pluginPath.Name, GetFieldsOfRecord(record, names)));
+                    var isReadonly = pluginPath.Extension.Equals(".esm", StringComparison.InvariantCultureIgnoreCase);
+                    conflictsMap.Add((pluginPath.Name, GetFieldsOfRecord(record, names, isReadonly)));
                 }
             }
         }
@@ -235,7 +236,7 @@ public partial class CompareService(INotificationService notificationService, IS
     /// <param name="record"></param>
     /// <param name="names"></param>
     /// <returns></returns>
-    private static List<RecordFieldViewModel> GetFieldsOfRecord(Record record, List<string> names)
+    private static List<RecordFieldViewModel> GetFieldsOfRecord(Record record, List<string> names, bool isReadonly)
     {
         Dictionary<string, object?> map = [];
         List<RecordFieldViewModel> fields = [];
@@ -278,7 +279,7 @@ public partial class CompareService(INotificationService notificationService, IS
         // todo to refactor
         foreach ((string name, object? field) in map)
         {
-            fields.Add(new(field, name));
+            fields.Add(new(field, name, isReadonly));
         }
 
         return fields;

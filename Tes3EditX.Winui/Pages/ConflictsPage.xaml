@@ -107,7 +107,11 @@
         <!--  Toplevel Templates  -->
         <DataTemplate x:Key="FieldDataTemplate" x:DataType="viewmodels:RecordFieldViewModel">
             <Grid>
-                <ContentControl Content="{x:Bind WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}" />
+                <ContentControl
+                    Content="{x:Bind, Mode=TwoWay,
+                                      UpdateSourceTrigger=PropertyChanged}"
+                    ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
+                    IsEnabled="{x:Bind IsEnabled}" />
             </Grid>
         </DataTemplate>
 
@@ -120,7 +124,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                    Text="{x:Bind Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{x:Bind}"
                     TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
@@ -149,7 +153,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                    Text="NULL"
+                    Text="{x:Bind}"
                     TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
@@ -170,7 +174,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="StringTemplate" x:DataType="x:String">
+        <DataTemplate x:Key="StringTemplate" x:DataType="viewmodels:RecordFieldViewModel">
             <Grid>
                 <TextBox
                     MinWidth="300"
@@ -179,7 +183,8 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                    Text="{x:Bind}"
+                    Text="{x:Bind WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextChanged="TextBox_TextChanged"
                     TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
@@ -269,22 +274,11 @@
         <!--  CONFLICT VIEW  -->
         <Grid>
 
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>-->
-
-            <!--  Names  -->
-            <!--<ListView
-                Grid.Column="0"
-                Margin="0,46,0,0"
-                ItemTemplate="{StaticResource FieldNameTemplate}"
-                ItemsSource="{x:Bind ViewModel.Names, Mode=TwoWay}" />-->
-
-
             <!--  Conflicts  -->
-            <!--  Grid.Column="1"  -->
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Auto">
+            <ScrollViewer
+                Grid.Row="0"
+                HorizontalScrollBarVisibility="Auto"
+                HorizontalScrollMode="Auto">
 
                 <ItemsRepeater
                     x:Name="outerRepeater"

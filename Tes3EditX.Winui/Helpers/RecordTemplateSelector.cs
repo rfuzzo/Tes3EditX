@@ -19,14 +19,9 @@ namespace Tes3EditX.Winui.Helpers
             {
                 return StringTemplate;
             }
-            else if (item.GetType() == typeof(RecordFieldViewModel))
-            {
-
-                return FieldDataTemplate;
-            }
             else
             {
-                return null;
+                return item.GetType() == typeof(RecordFieldViewModel) ? FieldDataTemplate : null;
             }
         }
     }
@@ -60,21 +55,17 @@ namespace Tes3EditX.Winui.Helpers
 
         private DataTemplate? SelectInternal(object? value)
         {
-            if (value is null)
+            if (value is RecordFieldViewModel vm)
             {
-                return null;
-            }
-            else
-            {
-                if (value is string)
+                if (vm.WrappedField is string)
                 {
                     return StringTemplate;
                 }
-                else if (value is int)
+                else if (vm.WrappedField is int)
                 {
                     return IntegerTemplate;
                 }
-                else if (value is bool)
+                else if (vm.WrappedField is bool)
                 {
                     return BooleanTemplate;
                 }
@@ -82,7 +73,7 @@ namespace Tes3EditX.Winui.Helpers
                 return GenericTemplate;
             }
 
-
+            return null;
         }
 
 

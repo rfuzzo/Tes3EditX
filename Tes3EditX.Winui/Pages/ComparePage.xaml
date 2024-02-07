@@ -67,11 +67,34 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!--  Header  -->
-                <TextBlock
-                    Margin="12,12,0,0"
-                    Style="{StaticResource BaseTextBlockStyle}"
-                    Text="CONFLICTS" />
+                <!--  Toolbar  -->
+                <RelativePanel>
+
+                    <!--  Header  -->
+                    <TextBlock
+                        x:Name="Header"
+                        Margin="12,12,0,0"
+                        Style="{StaticResource BaseTextBlockStyle}"
+                        Text="CONFLICTS" />
+
+                    <CommandBar
+                        HorizontalAlignment="Stretch"
+                        Background="Transparent"
+                        OverflowButtonVisibility="Collapsed"
+                        RelativePanel.AlignRightWithPanel="True">
+
+                        <AppBarButton
+                            Background="CornflowerBlue"
+                            Command="{x:Bind ViewModel.SaveCommand}"
+                            Icon="Save"
+                            Label="Save"
+                            ToolTipService.ToolTip="Save" />
+
+                    </CommandBar>
+                </RelativePanel>
+
+
+
 
                 <!--  Page  -->
                 <local:ConflictsPage

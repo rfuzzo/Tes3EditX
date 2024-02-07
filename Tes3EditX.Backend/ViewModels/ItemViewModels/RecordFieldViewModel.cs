@@ -1,19 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TES3Lib.Base;
-using TES3Lib.Interfaces;
 
 namespace Tes3EditX.Backend.ViewModels
 {
     public partial class RecordFieldViewModel : ObservableObject
     {
-        public RecordFieldViewModel(object? wrappedField, string name)
+        public RecordFieldViewModel(object? wrappedField, string name, bool isReadonly)
         {
+            _isReadonly = isReadonly;
+
             WrappedField = wrappedField;
             Name = name;
             Text = ToString();
@@ -21,9 +16,23 @@ namespace Tes3EditX.Backend.ViewModels
 
         [ObservableProperty]
         private object? _wrappedField;
+        private readonly bool _isReadonly;
+
         public string Name { get; }
         public string Text { get; }
         public bool IsConflict { get; set; }
+        public bool IsEnabled => !_isReadonly;
+
+        partial void OnWrappedFieldChanged(object? oldValue, object? newValue)
+        {
+            
+            if (oldValue is not null)
+            {
+                // register change
+
+            }
+
+        }
 
         // we display only the text in the normal compare view 
         // and double click opens an editor
@@ -35,7 +44,7 @@ namespace Tes3EditX.Backend.ViewModels
             }
             else
             {
-                if ( WrappedField is not string && WrappedField is IEnumerable enumerable)
+                if (WrappedField is not string && WrappedField is IEnumerable enumerable)
                 {
                     var result = "";
                     foreach (var item in enumerable)

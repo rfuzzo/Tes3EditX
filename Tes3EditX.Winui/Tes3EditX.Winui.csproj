@@ -29,6 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Controls\ListTemplate.xaml" />
     <None Remove="Pages\ComparePage.xaml" />
     <None Remove="Pages\ComparePluginPage.xaml" />
     <None Remove="Pages\ConflictsPage.xaml" />
@@ -81,6 +82,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\SettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\ListTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
