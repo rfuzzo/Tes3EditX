@@ -8,7 +8,7 @@ namespace Tes3EditX.Winui.Helpers
     {
         // Define the (currently empty) data templates to return
         // These will be "filled-in" in the XAML code.
-        public DataTemplate? StringTemplate { get; set; }
+        public DataTemplate? StringDataTemplate { get; set; }
 
         public DataTemplate? FieldDataTemplate { get; set; }
 
@@ -17,22 +17,12 @@ namespace Tes3EditX.Winui.Helpers
             // Return the correct data template based on the item's type.
             if (item.GetType() == typeof(string))
             {
-                return StringTemplate;
+                return StringDataTemplate;
             }
             else
             {
                 return item.GetType() == typeof(RecordFieldViewModel) ? FieldDataTemplate : null;
             }
-        }
-    }
-
-    public class RecordViewTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate? Common { get; set; }
-
-        protected override DataTemplate? SelectTemplateCore(object value)
-        {
-            return Common;
         }
     }
 
@@ -55,25 +45,20 @@ namespace Tes3EditX.Winui.Helpers
 
         private DataTemplate? SelectInternal(object? value)
         {
-            if (value is RecordFieldViewModel vm)
+            if (value is string)
             {
-                if (vm.WrappedField is string)
-                {
-                    return StringTemplate;
-                }
-                else if (vm.WrappedField is int)
-                {
-                    return IntegerTemplate;
-                }
-                else if (vm.WrappedField is bool)
-                {
-                    return BooleanTemplate;
-                }
-
-                return GenericTemplate;
+                return StringTemplate;
+            }
+            else if (value is int)
+            {
+                return IntegerTemplate;
+            }
+            else if (value is bool)
+            {
+                return BooleanTemplate;
             }
 
-            return null;
+            return GenericTemplate;
         }
 
 

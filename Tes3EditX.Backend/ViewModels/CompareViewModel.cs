@@ -2,35 +2,30 @@
 using CommunityToolkit.Mvvm.Input;
 using Tes3EditX.Backend.Services;
 
-namespace Tes3EditX.Backend.ViewModels
+namespace Tes3EditX.Backend.ViewModels;
+
+public partial class CompareViewModel : ObservableObject
 {
-    public partial class CompareViewModel : ObservableObject
+    public NotificationService? NotificationService;
+    private readonly ICompareService _compareService;
+    public CompareViewModel(INotificationService notificationService, ICompareService compareService)
     {
-        public NotificationService? NotificationService;
-        private readonly ICompareService _compareService;
-        public CompareViewModel(INotificationService notificationService, ICompareService compareService)
-        {
-            NotificationService = notificationService as NotificationService;
-            _compareService = compareService;
-        }
+        NotificationService = notificationService as NotificationService;
+        _compareService = compareService;
+    }
 
-        [ObservableProperty]
-        private bool _isPaneOpen = true;
+    [ObservableProperty]
+    private bool _isPaneOpen = true;
 
-        [RelayCommand]
-        private void TogglePane()
-        {
-            IsPaneOpen = !IsPaneOpen;
-        }
+    [RelayCommand]
+    private void TogglePane()
+    {
+        IsPaneOpen = !IsPaneOpen;
+    }
 
-        [RelayCommand]
-        private void Save()
-        {
-            foreach (var (key, value) in _compareService.Conflicts)
-            {
-                //
-
-            }
-        }
+    [RelayCommand]
+    private void Save()
+    {
+        
     }
 }

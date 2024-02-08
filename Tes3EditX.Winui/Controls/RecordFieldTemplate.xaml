@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="Tes3EditX.Winui.Controls.RecordFieldTemplate"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:Tes3EditX.Winui.Helpers"
+    xmlns:local="using:Tes3EditX.Winui.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:Tes3EditX.Backend.ViewModels"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <helpers:WrappedFieldTemplateSelector
+            x:Key="WrappedFieldTemplateSelector"
+            BooleanTemplate="{StaticResource BooleanTemplate}"
+            GenericTemplate="{StaticResource GenericTemplate}"
+            IntegerTemplate="{StaticResource IntegerTemplate}"
+            StringTemplate="{StaticResource StringTemplate}" />
+
+
+        <!--  Inner Templates  -->
+        <DataTemplate x:Key="BooleanTemplate" x:DataType="x:Boolean">
+            <Grid>
+                <CheckBox
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    IsChecked="{x:Bind}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GenericTemplate">
+            <Grid>
+                <TextBlock
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    Text="{x:Bind}"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="IntegerTemplate" x:DataType="x:Int32">
+            <Grid>
+                <NumberBox
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    LargeChange="10"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Compact"
+                    ValueChanged="NumberBox_ValueChanged"
+                    Value="{x:Bind}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StringTemplate" x:DataType="x:String">
+            <Grid>
+                <TextBox
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    Text="{x:Bind}"
+                    TextChanged="TextBox_TextChanged"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <!--  DataContext="{x:Bind RecordField}"  -->
+        <ContentControl
+            x:Name="contentControl"
+            Content="{x:Bind ViewModel.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
+            IsEnabled="{x:Bind ViewModel.IsEnabled}"
+            />
+    </Grid>
+</UserControl>

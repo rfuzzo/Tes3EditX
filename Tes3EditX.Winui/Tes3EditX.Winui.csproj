@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <None Remove="Controls\ListTemplate.xaml" />
+    <None Remove="Controls\RecordFieldTemplate.xaml" />
     <None Remove="Pages\ComparePage.xaml" />
     <None Remove="Pages\ComparePluginPage.xaml" />
     <None Remove="Pages\ConflictsPage.xaml" />
@@ -64,6 +65,11 @@
   <ItemGroup>
     <ProjectReference Include="..\TES3Tool\TES3Lib\TES3Lib.csproj" />
     <ProjectReference Include="..\Tes3EditX.Backend\Tes3EditX.Backend.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\RecordFieldTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\ConflictsPage.xaml">

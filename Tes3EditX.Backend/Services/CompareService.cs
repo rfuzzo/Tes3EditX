@@ -9,6 +9,9 @@ using Tes3EditX.Backend.Models;
 using Tes3EditX.Backend.ViewModels;
 using TES3Lib;
 using TES3Lib.Base;
+using TES3Lib.Records;
+using TES3Lib.Subrecords.Shared;
+using TES3 = TES3Lib.TES3;
 
 namespace Tes3EditX.Backend.Services;
 
@@ -23,6 +26,7 @@ public partial class CompareService(INotificationService notificationService, IS
     private readonly ISettingsService _settingsService = settingsService;
 
     public IEnumerable<PluginItemViewModel> Selectedplugins { get; set; } = new List<PluginItemViewModel>();
+    public RecordId? CurrentRecordId { get; set; }
 
     // todo get load order right
     // todo use hashes
@@ -146,7 +150,7 @@ public partial class CompareService(INotificationService notificationService, IS
     public bool HasAnyConflict(RecordId key, List<FileInfo> plugins)
     {
         string tag = key.Tag;
-        List<Record> records = new();
+        List<Record> records = [];
         foreach (FileInfo pluginPath in plugins)
         {
             // get plugin
@@ -209,7 +213,7 @@ public partial class CompareService(INotificationService notificationService, IS
     public List<(string, List<RecordFieldViewModel>)> GetConflictMap(List<FileInfo> plugins, RecordId recordId, List<string> names)
     {
         // fields by plugin
-        List<(string, List<RecordFieldViewModel>)> conflictsMap = new();
+        List<(string, List<RecordFieldViewModel>)> conflictsMap = [];
 
         // loop through plugins to get a vm with fields for each plugin
         foreach (FileInfo pluginPath in plugins)
@@ -221,7 +225,7 @@ public partial class CompareService(INotificationService notificationService, IS
                 Record? record = plugin.Records.FirstOrDefault(x => x is not null && x.GetUniqueId() == recordId);
                 if (record is not null)
                 {
-                    var isReadonly = pluginPath.Extension.Equals(".esm", StringComparison.InvariantCultureIgnoreCase);
+                    bool isReadonly = pluginPath.Extension.Equals(".esm", StringComparison.InvariantCultureIgnoreCase);
                     conflictsMap.Add((pluginPath.Name, GetFieldsOfRecord(record, names, isReadonly)));
                 }
             }
@@ -238,7 +242,7 @@ public partial class CompareService(INotificationService notificationService, IS
     /// <returns></returns>
     private static List<RecordFieldViewModel> GetFieldsOfRecord(Record record, List<string> names, bool isReadonly)
     {
-        Dictionary<string, object?> map = [];
+        Dictionary<string, (Subrecord subrecord, PropertyInfo propertyInfo)?> map = [];
         List<RecordFieldViewModel> fields = [];
 
         foreach (string name in names)
@@ -247,39 +251,46 @@ public partial class CompareService(INotificationService notificationService, IS
         }
 
         // get properties with reflection recursively
-        List<PropertyInfo> recordProperties = record.GetType().GetProperties(
+        foreach (Subrecord? subrecord in record.GetType().GetProperties(
                BindingFlags.Public |
                BindingFlags.Instance |
-               BindingFlags.DeclaredOnly).ToList();
-        foreach (PropertyInfo prop in recordProperties)
+               BindingFlags.DeclaredOnly).Select(x => x.GetValue(record) as Subrecord).Where(x => x is not null))
         {
-            object? v = prop.GetValue(record);
-
-            if (v is Subrecord subrecord)
+            if (subrecord is not null)
             {
-                List<PropertyInfo> subRecordProperties = subrecord.GetType().GetProperties(
+                PropertyInfo[] properties = subrecord.GetType().GetProperties(
                     BindingFlags.Public |
                     BindingFlags.Instance |
-                    BindingFlags.DeclaredOnly).ToList();
-                foreach (PropertyInfo subProp in subRecordProperties)
+                    BindingFlags.DeclaredOnly);
+
+                foreach (PropertyInfo propertyInfo in properties)
                 {
-                    if (map.ContainsKey($"{subrecord.Name}.{subProp.Name}"))
+                    if (map.ContainsKey($"{subrecord.Name}.{propertyInfo.Name}"))
                     {
-                        map[$"{subrecord.Name}.{subProp.Name}"] = subProp.GetValue(subrecord);
+                        map[$"{subrecord.Name}.{propertyInfo.Name}"] = (subrecord, propertyInfo);
                     }
-                    else if (map.ContainsKey(subProp.Name))
+                    else if (map.ContainsKey(propertyInfo.Name))
                     {
-                        map[subProp.Name] = subProp.GetValue(subrecord);
+                        map[propertyInfo.Name] = (subrecord, propertyInfo);
                     }
                 }
             }
         }
 
-        // fill fields
-        // todo to refactor
-        foreach ((string name, object? field) in map)
+        // flatten
+        foreach ((string name, var val) in map)
         {
-            fields.Add(new(field, name, isReadonly));
+            if (val is not null)
+            {
+                object? field = val.Value.propertyInfo.GetValue(val.Value.subrecord);
+                var isReadonlyForce = isReadonly;
+                if (name == "EditorId")
+                {
+                    isReadonlyForce = true;
+                }
+                fields.Add(new(val.Value, field, name, isReadonlyForce));
+            }
+
         }
 
         return fields;

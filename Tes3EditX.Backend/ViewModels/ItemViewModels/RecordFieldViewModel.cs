@@ -1,14 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections;
+using System.Reflection;
+using TES3Lib.Base;
 
 namespace Tes3EditX.Backend.ViewModels
 {
     public partial class RecordFieldViewModel : ObservableObject
     {
-        public RecordFieldViewModel(object? wrappedField, string name, bool isReadonly)
+        private readonly (Subrecord subrecord, PropertyInfo propertyInfo) _info;
+        
+        private readonly bool _isReadonly;
+
+        public RecordFieldViewModel((Subrecord subrecord, PropertyInfo propertyInfo) info, object? wrappedField, string name, bool isReadonly)
         {
             _isReadonly = isReadonly;
-
+            _info = info;
             WrappedField = wrappedField;
             Name = name;
             Text = ToString();
@@ -16,7 +22,6 @@ namespace Tes3EditX.Backend.ViewModels
 
         [ObservableProperty]
         private object? _wrappedField;
-        private readonly bool _isReadonly;
 
         public string Name { get; }
         public string Text { get; }
@@ -25,13 +30,11 @@ namespace Tes3EditX.Backend.ViewModels
 
         partial void OnWrappedFieldChanged(object? oldValue, object? newValue)
         {
-            
-            if (oldValue is not null)
+            if (oldValue != null)
             {
-                // register change
-
+                // reflect up
+                _info.propertyInfo.SetValue(_info.subrecord, newValue);
             }
-
         }
 
         // we display only the text in the normal compare view 
@@ -44,14 +47,14 @@ namespace Tes3EditX.Backend.ViewModels
             }
             else
             {
-                if (WrappedField is not string && WrappedField is IEnumerable enumerable)
+                if (WrappedField is not string and IEnumerable enumerable)
                 {
-                    var result = "";
-                    foreach (var item in enumerable)
+                    string result = "";
+                    foreach (object? item in enumerable)
                     {
                         result += $"{item}|";
                     }
-                    var r1 = result.TrimEnd('|');
+                    string r1 = result.TrimEnd('|');
                     return r1;
                 }
 

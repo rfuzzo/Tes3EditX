@@ -9,6 +9,11 @@ using Tes3EditX.Backend.ViewModels.ItemViewModels;
 
 namespace Tes3EditX.Backend.ViewModels;
 
+public partial class RecordFieldTemplateViewModel : ObservableObject
+{
+
+}
+
 public partial class ConflictsViewModel : ObservableRecipient
 {
     private readonly INavigationService _navigationService;
@@ -17,7 +22,7 @@ public partial class ConflictsViewModel : ObservableRecipient
 
 
     // Record Select View
-    private readonly List<RecordItemViewModel> _records = [];
+    private readonly List<RecordViewModel> _records = [];
 
     [ObservableProperty]
     private ObservableCollection<GroupInfoList> _groupedRecords;
@@ -72,7 +77,10 @@ public partial class ConflictsViewModel : ObservableRecipient
         _records.Clear();
         foreach ((RecordId? id, List<FileInfo> plugins) in conflicts)
         {
-            _records.Add(new RecordItemViewModel(id.Tag, id.EditorId, plugins));
+            // add record item vm
+            _records.Add(new RecordViewModel(id.Tag, id.EditorId, plugins));
+            
+            // add tag
             if (!tags.Contains(id.Tag))
             {
                 tags.Add(id.Tag);
@@ -124,7 +132,7 @@ public partial class ConflictsViewModel : ObservableRecipient
     /// <param name="value"></param>
     partial void OnSelectedRecordChanged(object? value)
     {
-        if (value is not RecordItemViewModel recordItemViewModel)
+        if (value is not RecordViewModel recordItemViewModel)
         {
             return;
         }
@@ -138,7 +146,10 @@ public partial class ConflictsViewModel : ObservableRecipient
 
         // transform to vertical layout
         Fields.Clear();
-        Fields.Add(new("Plugins", conflicts.Select(x => x.Item1).Cast<object>().ToList(), false));
+        // header is just the plugin names
+        Fields.Add(new ConflictRecordFieldViewModel("Plugins", conflicts.Select(x => x.Item1).Cast<object>().ToList(), false));
+        
+        // add the record fields
         foreach (var name in names)
         {
             var hasConflict = false;
@@ -156,6 +167,8 @@ public partial class ConflictsViewModel : ObservableRecipient
             Fields.Add(new ConflictRecordFieldViewModel(name, list, hasConflict));
         }
 
+        // TODO notify parent?
+        _compareService.CurrentRecordId = recordId;
     }
 
     partial void OnSelectedTagChanged(string value)

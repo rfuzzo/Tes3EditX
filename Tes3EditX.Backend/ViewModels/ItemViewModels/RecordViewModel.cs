@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tes3EditX.Backend.Extensions;
 
-namespace Tes3EditX.Backend.ViewModels;
+namespace Tes3EditX.Backend.ViewModels.ItemViewModels;
 
 /// <summary>
 /// This viewmodel wraps a TES3 record id
@@ -14,25 +14,17 @@ namespace Tes3EditX.Backend.ViewModels;
 /// Name is the record id (not-unique!)
 /// Plugins is a list of Plugins this record is found in
 /// </summary>
-public class RecordItemViewModel
+public class RecordViewModel(string tag, string name, List<FileInfo> plugins)
 {
-    public RecordItemViewModel(string tag, string name, List<FileInfo> plugins )
-    {
-        Name = name;
-        Tag = tag;
+    public string Tag { get; set; } = tag;
+    public string Name { get; set; } = name;
 
-        Plugins = plugins;
-    }
-
-    public string Tag { get; set; }
-    public string Name { get; set; }
-
-    public List<FileInfo> Plugins { get; set; }
+    public List<FileInfo> Plugins { get; set; } = plugins;
 
     public override string ToString()
     {
         return Name;
     }
 
-    public RecordId GetUniqueId() => new(Tag,Name);
+    public RecordId GetUniqueId() => new(Tag, Name);
 }

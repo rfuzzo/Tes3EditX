@@ -55,8 +55,5 @@ public sealed partial class ConflictsPage : Page
         }
     }
 
-    private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-    {
-
-    }
+    
 }
