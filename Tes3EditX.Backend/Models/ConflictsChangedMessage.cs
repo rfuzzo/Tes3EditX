@@ -15,4 +15,11 @@ namespace Tes3EditX.Backend.Models
             // 
         }
     }
+    public class FieldChangedMessage : ValueChangedMessage<string>
+    {
+        public FieldChangedMessage(string id) : base(id)
+        {
+            // 
+        }
+    }
 }

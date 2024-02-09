@@ -6,13 +6,10 @@ using Tes3EditX.Backend.Extensions;
 using Tes3EditX.Backend.Models;
 using Tes3EditX.Backend.Services;
 using Tes3EditX.Backend.ViewModels.ItemViewModels;
+using TES3Lib.Base;
+using TES3Lib.Records;
 
 namespace Tes3EditX.Backend.ViewModels;
-
-public partial class RecordFieldTemplateViewModel : ObservableObject
-{
-
-}
 
 public partial class ConflictsViewModel : ObservableRecipient
 {
@@ -69,17 +66,65 @@ public partial class ConflictsViewModel : ObservableRecipient
                 vm.RegenerateRecords(m.Value);
             }
         });
+        WeakReferenceMessenger.Default.Register<FieldChangedMessage>(this, (r, m) =>
+        {
+            // Handle the message here, with r being the recipient and m being the
+            // input message. Using the recipient passed as input makes it so that
+            // the lambda expression doesn't capture "this", improving performance.
+            if (r is ConflictsViewModel vm)
+            {
+                vm.UpdateStatusForField(m.Value);
+            }
+        });
+    }
+
+    public void UpdateStatusForField(string id)
+    {
+        foreach (ConflictRecordFieldViewModel? vm in Fields.Where(x => x.FieldName == id))
+        {
+            // check and set conflicts
+            bool anyConflict = false;
+            List<RecordFieldViewModel> items = vm.FieldByPlugins.Where(x => x is RecordFieldViewModel).Cast<RecordFieldViewModel>().ToList();
+
+            for (int i = 1; i < items.Count; i++)
+            {
+                RecordFieldViewModel f = items[i];
+                RecordFieldViewModel f_last = items[i - 1];
+
+                if (f_last.WrappedField is not null && f.WrappedField is not null)
+                {
+                    if (!CompareService.Tes3Equals(f_last.WrappedField, f.WrappedField))
+                    {
+                        f.IsConflict = true;
+                        anyConflict = true;
+                    }
+                }
+                else if (f_last.WrappedField is null && f.WrappedField is null)
+                {
+                    // do nothing
+                }
+                else
+                {
+                    f.IsConflict = true;
+                    anyConflict = true;
+                }
+
+            }
+
+            // update vm
+            vm.HasConflict = anyConflict;
+        }
     }
 
     public void RegenerateRecords(Dictionary<RecordId, List<FileInfo>> conflicts)
     {
-        var tags = new List<string>() { "_" };
+        List<string> tags = new() { "_" };
         _records.Clear();
         foreach ((RecordId? id, List<FileInfo> plugins) in conflicts)
         {
             // add record item vm
             _records.Add(new RecordViewModel(id.Tag, id.EditorId, plugins));
-            
+
             // add tag
             if (!tags.Contains(id.Tag))
             {
@@ -140,7 +185,7 @@ public partial class ConflictsViewModel : ObservableRecipient
         var recordId = recordItemViewModel.GetUniqueId();
         var names = _compareService.GetNames(recordItemViewModel.Tag);
         var conflicts = _compareService.GetConflictMap(recordItemViewModel.Plugins, recordId, names);
-      
+
         // loop again to get field equality
         CompareService.SetConflictStatus(conflicts);
 
@@ -148,7 +193,7 @@ public partial class ConflictsViewModel : ObservableRecipient
         Fields.Clear();
         // header is just the plugin names
         Fields.Add(new ConflictRecordFieldViewModel("Plugins", conflicts.Select(x => x.Item1).Cast<object>().ToList(), false));
-        
+
         // add the record fields
         foreach (var name in names)
         {

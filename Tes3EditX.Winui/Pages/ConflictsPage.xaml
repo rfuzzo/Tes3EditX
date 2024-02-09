@@ -30,22 +30,7 @@
             IsSourceGrouped="True"
             Source="{x:Bind ViewModel.GroupedRecords, Mode=OneWay}" />
 
-        <helpers:BooleanToColorConverter x:Key="ColorConverter" />
         <helpers:BooleanToColorConverterFieldName x:Key="ColorConverterFieldName" />
-
-        <!--  read only  -->
-        <DataTemplate x:Key="CommonTemplate" x:DataType="viewmodels:RecordFieldViewModel">
-            <StackPanel>
-                <TextBlock
-                    FontWeight="Light"
-                    Foreground="DimGray"
-                    Text="{x:Bind Name}" />
-                <TextBlock
-                    Foreground="{x:Bind IsConflict, Mode=OneWay, Converter={StaticResource ColorConverter}}"
-                    Text="{x:Bind Text}"
-                    TextWrapping="Wrap" />
-            </StackPanel>
-        </DataTemplate>
 
         <!--  Item Repeaters  -->
         <DataTemplate x:Key="CategoryTemplate" x:DataType="itemviewmodels:ConflictRecordFieldViewModel">
@@ -98,7 +83,7 @@
         <!--  Toplevel Templates  -->
         <DataTemplate x:Key="FieldDataTemplate" x:DataType="viewmodels:RecordFieldViewModel">
             <Grid>
-                <controls:RecordFieldTemplate />
+                <controls:RecordFieldTemplate RecordField="{x:Bind Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </DataTemplate>
 

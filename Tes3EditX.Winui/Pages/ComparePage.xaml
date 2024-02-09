@@ -81,7 +81,7 @@
                         HorizontalAlignment="Stretch"
                         Background="Transparent"
                         OverflowButtonVisibility="Collapsed"
-                        RelativePanel.AlignRightWithPanel="True">
+                        RelativePanel.RightOf="Header">
 
                         <AppBarButton
                             Background="CornflowerBlue"

@@ -85,9 +85,8 @@
         <!--  DataContext="{x:Bind RecordField}"  -->
         <ContentControl
             x:Name="contentControl"
-            Content="{x:Bind ViewModel.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            Content="{x:Bind RecordField.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
-            IsEnabled="{x:Bind ViewModel.IsEnabled}"
-            />
+            IsEnabled="{x:Bind RecordField.IsEnabled}" />
     </Grid>
 </UserControl>

@@ -25,51 +25,33 @@ public sealed partial class RecordFieldTemplate : UserControl
 {
     public RecordFieldTemplate()
     {
-        InitializeComponent();
-
-        this.PropertyChanged += RecordFieldTemplate_PropertyChanged;   
-
-        
+        InitializeComponent();        
     }
+    
+    public static readonly DependencyProperty RecordFieldProperty = DependencyProperty.Register(
+          nameof(RecordField),
+          typeof(RecordFieldViewModel),
+          typeof(RecordFieldTemplate),
+          new PropertyMetadata(null)
+        );
 
-    private void RecordFieldTemplate_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    public RecordFieldViewModel RecordField
     {
-        if (e.PropertyName ==  nameof(ViewModel))
-        {
-
-        }
+        get { return (RecordFieldViewModel)GetValue(RecordFieldProperty); }
+        set { SetValue(RecordFieldProperty, value); }
     }
-
-    
-    
-    public RecordFieldViewModel ViewModel => (RecordFieldViewModel)DataContext;
-
-
-
-    //public static readonly DependencyProperty RecordFieldProperty = DependencyProperty.Register(
-    //      nameof(RecordField),
-    //      typeof(RecordFieldViewModel),
-    //      typeof(RecordFieldTemplate),
-    //      new PropertyMetadata(null)
-    //    );
-
-    //public RecordFieldViewModel RecordField
-    //{
-    //    get { return (RecordFieldViewModel)GetValue(RecordFieldProperty); }
-    //    set { SetValue(RecordFieldProperty, value); }
-    //}
 
     private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         // notify the record/plugin that something changed
-        //if (sender is TextBox textBox && RecordField.WrappedField is string str)
-        //{
-        //    string text = textBox.Text;
-        //    if (!string.IsNullOrEmpty(text) && str.Trim('\0') != text)
-        //    {
-        //        RecordField.WrappedField = text;
-        //    }
-        //}
+        if (sender is TextBox textBox && RecordField.WrappedField is string str)
+        {
+            string text = textBox.Text;
+            if (!string.IsNullOrEmpty(text) && str.Trim('\0') != text)
+            {
+                RecordField.WrappedField = text;
+            }
+        }
     }
 
     private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)

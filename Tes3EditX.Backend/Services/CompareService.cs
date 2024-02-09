@@ -296,6 +296,18 @@ public partial class CompareService(INotificationService notificationService, IS
         return fields;
     }
 
+    public static bool Tes3Equals(object value1, object value2)
+    {
+        if (value1 is string a && value2 is string b)
+        {
+            return a.Trim('\0').Equals(b.Trim('\0'));
+        }
+        else
+        {
+            return value1.Equals(value2);
+        }
+    }
+
     /// <summary>
     /// Loops through the conflict map and sets conflict status
     /// </summary>
@@ -322,7 +334,7 @@ public partial class CompareService(INotificationService notificationService, IS
                     RecordFieldViewModel f_last = c_last[j];
                     if (f_last.WrappedField is not null && f.WrappedField is not null)
                     {
-                        if (!f_last.WrappedField.Equals(f.WrappedField))
+                        if (!Tes3Equals(f_last.WrappedField, f.WrappedField))
                         {
                             f.IsConflict = true;
                             anyConflict = true;

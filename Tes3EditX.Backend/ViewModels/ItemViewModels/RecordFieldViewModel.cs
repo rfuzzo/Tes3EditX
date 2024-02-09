@@ -1,21 +1,26 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using System.Collections;
 using System.Reflection;
+using Tes3EditX.Backend.Models;
 using TES3Lib.Base;
+using TES3Lib.Records;
 
 namespace Tes3EditX.Backend.ViewModels
 {
     public partial class RecordFieldViewModel : ObservableObject
     {
         private readonly (Subrecord subrecord, PropertyInfo propertyInfo) _info;
-        
+
         private readonly bool _isReadonly;
 
         public RecordFieldViewModel((Subrecord subrecord, PropertyInfo propertyInfo) info, object? wrappedField, string name, bool isReadonly)
         {
             _isReadonly = isReadonly;
             _info = info;
+
             WrappedField = wrappedField;
+
             Name = name;
             Text = ToString();
         }
@@ -34,6 +39,8 @@ namespace Tes3EditX.Backend.ViewModels
             {
                 // reflect up
                 _info.propertyInfo.SetValue(_info.subrecord, newValue);
+                // notify UI
+                WeakReferenceMessenger.Default.Send(new FieldChangedMessage(Name));
             }
         }
 
