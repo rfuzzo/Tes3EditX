@@ -25,7 +25,7 @@ public partial class ConflictsViewModel : ObservableRecipient
     private ObservableCollection<GroupInfoList> _groupedRecords;
 
     [ObservableProperty]
-    private object? _selectedRecord = null;
+    private RecordViewModel? _selectedRecord = null;
 
     public string FilterName { get; set; } = "";
 
@@ -73,7 +73,26 @@ public partial class ConflictsViewModel : ObservableRecipient
             // the lambda expression doesn't capture "this", improving performance.
             if (r is ConflictsViewModel vm)
             {
-                vm.UpdateStatusForField(m.Value);
+                string name = m.Value.Item1;
+                vm.UpdateStatusForField(name);
+                // mark dirty
+                FileInfo path = m.Value.Item2;
+                if (SelectedRecord != null)
+                {
+                    RecordId id = SelectedRecord.GetUniqueId();
+                    if (_compareService.DirtyRecords.TryGetValue(path, out List<RecordId>? list))
+                    {
+                        if (list.Contains(id))
+                        {
+                            list.Add(id);
+                        }
+                    }
+                    else
+                    {
+                        compareService.DirtyRecords.Add(path, [id]);
+                    }
+
+                }
             }
         });
     }
@@ -118,7 +137,7 @@ public partial class ConflictsViewModel : ObservableRecipient
 
     public void RegenerateRecords(Dictionary<RecordId, List<FileInfo>> conflicts)
     {
-        List<string> tags = new() { "_" };
+        List<string> tags = ["_"];
         _records.Clear();
         foreach ((RecordId? id, List<FileInfo> plugins) in conflicts)
         {
@@ -175,16 +194,16 @@ public partial class ConflictsViewModel : ObservableRecipient
     /// Populate conflicts view when a record is selected
     /// </summary>
     /// <param name="value"></param>
-    partial void OnSelectedRecordChanged(object? value)
+    partial void OnSelectedRecordChanged(RecordViewModel? value)
     {
-        if (value is not RecordViewModel recordItemViewModel)
+        if (value is null)
         {
             return;
         }
 
-        var recordId = recordItemViewModel.GetUniqueId();
-        var names = _compareService.GetNames(recordItemViewModel.Tag);
-        var conflicts = _compareService.GetConflictMap(recordItemViewModel.Plugins, recordId, names);
+        var recordId = value.GetUniqueId();
+        var names = _compareService.GetNames(value.Tag);
+        var conflicts = _compareService.GetConflictMap(value.Plugins, recordId, names);
 
         // loop again to get field equality
         CompareService.SetConflictStatus(conflicts);
@@ -211,9 +230,6 @@ public partial class ConflictsViewModel : ObservableRecipient
 
             Fields.Add(new ConflictRecordFieldViewModel(name, list, hasConflict));
         }
-
-        // TODO notify parent?
-        _compareService.CurrentRecordId = recordId;
     }
 
     partial void OnSelectedTagChanged(string value)

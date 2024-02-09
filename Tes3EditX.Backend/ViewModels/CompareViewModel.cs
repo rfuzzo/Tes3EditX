@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Tes3EditX.Backend.Services;
+using TES3Lib;
 
 namespace Tes3EditX.Backend.ViewModels;
 
@@ -26,6 +27,13 @@ public partial class CompareViewModel : ObservableObject
     [RelayCommand]
     private void Save()
     {
-        
+        // get dirty records
+        if (_compareService.DirtyRecords.Count > 0)
+        {
+            
+
+            
+        }
+
     }
 }

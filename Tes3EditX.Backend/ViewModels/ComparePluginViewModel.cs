@@ -130,7 +130,7 @@ public partial class ComparePluginViewModel : ObservableObject
             .Where(x => x.Enabled)
             .OrderBy(x => x.Info.Extension.ToLower())
             .ThenBy(x => x.Info.LastWriteTime);
-        await _compareService.CalculateConflicts(); // todo make async
+        await _compareService.CalculateConflicts();
         // navigate away
         await _navigationService.NavigateToAsync("//Main/Main");
     }

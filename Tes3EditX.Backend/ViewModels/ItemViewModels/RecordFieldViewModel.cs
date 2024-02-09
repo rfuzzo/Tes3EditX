@@ -10,21 +10,24 @@ namespace Tes3EditX.Backend.ViewModels
 {
     public partial class RecordFieldViewModel : ObservableObject
     {
-        private readonly (Subrecord subrecord, PropertyInfo propertyInfo) _info;
+        private readonly Subrecord _subrecord;
+        private readonly PropertyInfo _propertyInfo;
+        private readonly FileInfo _pluginPath;
 
         private readonly bool _isReadonly;
 
-        public RecordFieldViewModel((Subrecord subrecord, PropertyInfo propertyInfo) info, object? wrappedField, string name, bool isReadonly)
+        public RecordFieldViewModel(FileInfo pluginPath, Subrecord subrecord, PropertyInfo propertyInfo, object? wrappedField, string name, bool isReadonly)
         {
             _isReadonly = isReadonly;
-            _info = info;
-            IsEnabled = !_isReadonly;
-
+            _pluginPath = pluginPath;
+            _subrecord = subrecord;
+            _propertyInfo = propertyInfo;
+            
             WrappedField = wrappedField;
-
             Name = name;
-            Text = ToString();
 
+            Text = ToString();
+            IsEnabled = !_isReadonly;
         }
 
         [ObservableProperty]
@@ -42,9 +45,9 @@ namespace Tes3EditX.Backend.ViewModels
             if (oldValue != null)
             {
                 // reflect up
-                _info.propertyInfo.SetValue(_info.subrecord, newValue);
+                _propertyInfo.SetValue(_subrecord, newValue);
                 // notify UI
-                WeakReferenceMessenger.Default.Send(new FieldChangedMessage(Name));
+                WeakReferenceMessenger.Default.Send(new FieldChangedMessage(Name, _pluginPath));
             }
         }
 

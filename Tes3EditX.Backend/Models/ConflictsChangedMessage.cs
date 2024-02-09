@@ -8,11 +8,11 @@ using Tes3EditX.Backend.Extensions;
 
 namespace Tes3EditX.Backend.Models;
 
-public class ConflictsChangedMessage(Dictionary<RecordId, List<FileInfo>> conflicts) 
+public class ConflictsChangedMessage(Dictionary<RecordId, List<FileInfo>> conflicts)
     : ValueChangedMessage<Dictionary<RecordId, List<FileInfo>>>(conflicts)
 {
 }
 
-public class FieldChangedMessage(string id) : ValueChangedMessage<string>(id)
+public class FieldChangedMessage(string id, FileInfo pluginPath) : ValueChangedMessage<(string, FileInfo)>((id, pluginPath))
 {
 }

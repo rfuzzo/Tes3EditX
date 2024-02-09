@@ -14,7 +14,8 @@ public interface ICompareService
     public Dictionary<FileInfo, TES3> Plugins { get; }
     public Dictionary<RecordId, List<FileInfo>> Conflicts { get; set; }
     public IEnumerable<PluginItemViewModel> Selectedplugins { get; set; }
-    RecordId? CurrentRecordId { get; set; }
+
+    public Dictionary<FileInfo, List<RecordId>> DirtyRecords { get; set; }
 
     Task CalculateConflicts();
     List<(string, List<RecordFieldViewModel>)> GetConflictMap(List<FileInfo> plugins, RecordId recordId, List<string> names);

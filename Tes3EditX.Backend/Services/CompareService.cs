@@ -15,7 +15,8 @@ using TES3 = TES3Lib.TES3;
 
 namespace Tes3EditX.Backend.Services;
 
-public partial class CompareService(INotificationService notificationService, ISettingsService settingsService) : ObservableObject, ICompareService
+public partial class CompareService(INotificationService notificationService, ISettingsService settingsService) 
+    : ObservableObject, ICompareService
 {
     public Dictionary<FileInfo, TES3> Plugins { get; } = [];
 
@@ -27,18 +28,15 @@ public partial class CompareService(INotificationService notificationService, IS
 
     public IEnumerable<PluginItemViewModel> Selectedplugins { get; set; } = new List<PluginItemViewModel>();
     public RecordId? CurrentRecordId { get; set; }
+    public Dictionary<FileInfo, List<RecordId>> DirtyRecords { get; set; } = [];
 
     // todo get load order right
     // todo use hashes
     public async Task CalculateConflicts()
     {
-        if (Selectedplugins is null)
-        {
-            return;
-        }
-
         Conflicts.Clear();
         Plugins.Clear();
+        DirtyRecords.Clear();
 
         // map plugin records
         Dictionary<FileInfo, HashSet<RecordId>> pluginMap = [];
@@ -226,7 +224,7 @@ public partial class CompareService(INotificationService notificationService, IS
                 if (record is not null)
                 {
                     bool isReadonly = pluginPath.Extension.Equals(".esm", StringComparison.InvariantCultureIgnoreCase);
-                    conflictsMap.Add((pluginPath.Name, GetFieldsOfRecord(record, names, isReadonly)));
+                    conflictsMap.Add((pluginPath.Name, GetFieldsOfRecord(pluginPath, record, names, isReadonly)));
                 }
             }
         }
@@ -240,7 +238,7 @@ public partial class CompareService(INotificationService notificationService, IS
     /// <param name="record"></param>
     /// <param name="names"></param>
     /// <returns></returns>
-    private static List<RecordFieldViewModel> GetFieldsOfRecord(Record record, List<string> names, bool isReadonly)
+    private static List<RecordFieldViewModel> GetFieldsOfRecord(FileInfo pluginPath, Record record, List<string> names, bool isReadonly)
     {
         Dictionary<string, (Subrecord subrecord, PropertyInfo propertyInfo)?> map = [];
         List<RecordFieldViewModel> fields = [];
@@ -288,7 +286,7 @@ public partial class CompareService(INotificationService notificationService, IS
                 {
                     isReadonlyForce = true;
                 }
-                fields.Add(new(val.Value, field, name, isReadonlyForce));
+                fields.Add(new(pluginPath, val.Value.subrecord, val.Value.propertyInfo, field, name, isReadonlyForce));
             }
 
         }
