@@ -87,6 +87,6 @@
             x:Name="contentControl"
             Content="{x:Bind RecordField.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
-            IsEnabled="{x:Bind RecordField.IsEnabled}" />
+            IsEnabled="{x:Bind RecordField.IsEnabled, Mode=OneWay}" />
     </Grid>
 </UserControl>

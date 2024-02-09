@@ -18,20 +18,24 @@ namespace Tes3EditX.Backend.ViewModels
         {
             _isReadonly = isReadonly;
             _info = info;
+            IsEnabled = !_isReadonly;
 
             WrappedField = wrappedField;
 
             Name = name;
             Text = ToString();
+
         }
 
         [ObservableProperty]
         private object? _wrappedField;
 
+        [ObservableProperty]
+        private bool _isEnabled;
+
         public string Name { get; }
         public string Text { get; }
         public bool IsConflict { get; set; }
-        public bool IsEnabled => !_isReadonly;
 
         partial void OnWrappedFieldChanged(object? oldValue, object? newValue)
         {
