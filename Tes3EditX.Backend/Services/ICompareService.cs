@@ -11,6 +11,7 @@ namespace Tes3EditX.Backend.Services;
 
 public interface ICompareService
 {
+    public DirectoryInfo? DataFiles { get; set; }
     public Dictionary<FileInfo, TES3> Plugins { get; }
     public Dictionary<RecordId, List<FileInfo>> Conflicts { get; set; }
     public IEnumerable<PluginItemViewModel> Selectedplugins { get; set; }

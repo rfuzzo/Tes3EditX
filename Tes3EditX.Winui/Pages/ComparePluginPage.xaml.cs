@@ -19,15 +19,19 @@ public sealed partial class ComparePluginPage : Page
 {
     public ComparePluginPage()
     {
-        this.InitializeComponent();
+        InitializeComponent();
         Loaded += ComparePluginPage_Loaded;
 
-        this.DataContext = App.Current.Services.GetService<ComparePluginViewModel>();
+        DataContext = App.Current.Services.GetService<ComparePluginViewModel>();
     }
 
     private async void ComparePluginPage_Loaded(object sender, RoutedEventArgs e)
     {
-        await ViewModel.InitPluginsAsync();
+        if (!ViewModel.StartupLoaded)
+        {
+            await ViewModel.InitPluginsAsync();
+            ViewModel.StartupLoaded = true;
+        }
     }
 
     public ComparePluginViewModel ViewModel => (ComparePluginViewModel)DataContext;
@@ -90,6 +94,9 @@ public sealed partial class ComparePluginPage : Page
                 }
             }
         }
+
+        // notify service
+        ViewModel.SelectionUpdated();
     }
 
     private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -117,4 +124,5 @@ public sealed partial class ComparePluginPage : Page
     {
         listview.SelectedItems.Clear();
     }
+
 }

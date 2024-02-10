@@ -73,11 +73,11 @@
                 Label="Activate Masters"
                 ToolTipService.ToolTip="Activate Masters" />
             <AppBarButton
-                Background="Green"
-                Command="{x:Bind ViewModel.CompareCommand}"
-                Icon="Play"
-                Label="Compare"
-                ToolTipService.ToolTip="Compare" />
+                Command="{x:Bind ViewModel.InitPluginsCommand}"
+                Icon="Refresh"
+                Label="Refresh"
+                ToolTipService.ToolTip="Refresh" />
+
         </CommandBar>
 
         <!--  Plugins list  -->

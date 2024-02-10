@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using Tes3EditX.Backend.Services;
 using TES3Lib;
@@ -15,6 +16,8 @@ public partial class ComparePluginViewModel : ObservableObject
     private readonly ICompareService _compareService;
     private readonly ISettingsService _settingsService;
     private readonly IFileApiService _folderPicker;
+
+    public bool StartupLoaded { get; set; } = false;
 
 
     public List<PluginItemViewModel> PluginsList { get; set; } = new();
@@ -30,8 +33,6 @@ public partial class ComparePluginViewModel : ObservableObject
     [ObservableProperty]
     private DirectoryInfo _folderPath;
 
-    private bool _loadOnce;
-
     public ComparePluginViewModel(
         INavigationService navigationService,
         INotificationService notificationService,
@@ -46,17 +47,18 @@ public partial class ComparePluginViewModel : ObservableObject
         _folderPicker = folderPicker;
 
         FolderPath = _settingsService.GetWorkingDirectory();
+
+
     }
 
+    partial void OnFolderPathChanged(DirectoryInfo value)
+    {
+        _compareService.DataFiles = value;
+    }
 
-
+    [RelayCommand]
     public async Task InitPluginsAsync()
     {
-        if (_loadOnce)
-        {
-            return;
-        }
-
         var stopwatch = Stopwatch.StartNew();
 
         var pluginPaths = FolderPath.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
@@ -68,7 +70,7 @@ public partial class ComparePluginViewModel : ObservableObject
         _notificationService.Maximum = pluginPaths.Count;
         _notificationService.Enabled = false;
 
-        var plugins = new List<PluginItemViewModel>();
+        var plugins = new ConcurrentBag<PluginItemViewModel>();
 
 
 
@@ -101,7 +103,6 @@ public partial class ComparePluginViewModel : ObservableObject
         stopwatch.Stop();
         _notificationService.Text = stopwatch.Elapsed.TotalSeconds.ToString();
         _notificationService.Enabled = true;
-        _loadOnce = true;
 
         await Task.CompletedTask;
     }
@@ -117,22 +118,9 @@ public partial class ComparePluginViewModel : ObservableObject
 
             if (FolderPath.Exists)
             {
-                _loadOnce = false;
                 await InitPluginsAsync();
             }
         }
-    }
-
-    [RelayCommand]
-    private async Task Compare()
-    {
-        _compareService.Selectedplugins = PluginsList
-            .Where(x => x.Enabled)
-            .OrderBy(x => x.Info.Extension.ToLower())
-            .ThenBy(x => x.Info.LastWriteTime);
-        await _compareService.CalculateConflicts();
-        // navigate away
-        await _navigationService.NavigateToAsync("//Main/Main");
     }
 
     public void Filter(string value)
@@ -152,5 +140,13 @@ public partial class ComparePluginViewModel : ObservableObject
             }
 
         }
+    }
+
+    public void SelectionUpdated()
+    {
+        _compareService.Selectedplugins = PluginsList
+            .Where(x => x.Enabled)
+            .OrderBy(x => x.Info.Extension.ToLower())
+            .ThenBy(x => x.Info.LastWriteTime);
     }
 }

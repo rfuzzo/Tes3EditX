@@ -29,6 +29,8 @@ public partial class CompareService(INotificationService notificationService, IS
     public IEnumerable<PluginItemViewModel> Selectedplugins { get; set; } = new List<PluginItemViewModel>();
     public RecordId? CurrentRecordId { get; set; }
     public Dictionary<FileInfo, List<RecordId>> DirtyRecords { get; set; } = [];
+    public DirectoryInfo? DataFiles { get; set ; }
+
 
     // todo get load order right
     // todo use hashes
