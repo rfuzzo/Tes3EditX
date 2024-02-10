@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Tes3EditX.Backend.Services;
-using TES3Lib;
 
 namespace Tes3EditX.Backend.ViewModels;
 
@@ -30,9 +29,18 @@ public partial class CompareViewModel : ObservableObject
         // get dirty records
         if (_compareService.DirtyRecords.Count > 0)
         {
-            
+            foreach (var path in _compareService.DirtyRecords.Keys)
+            {
+                // get plugin
+                if (_compareService.Plugins.TryGetValue(path, out var plugin))
+                {
+                    var ext = path.Extension.ToLower();
+                    var newPath = Path.ChangeExtension(path.FullName, $".patch{ext}");
+                    plugin.TES3Save(newPath);
+                }
+            }
 
-            
+
         }
 
     }
