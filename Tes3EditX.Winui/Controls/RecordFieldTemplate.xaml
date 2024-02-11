@@ -82,7 +82,6 @@
     </UserControl.Resources>
 
     <Grid>
-        <!--  DataContext="{x:Bind RecordField}"  -->
         <ContentControl
             x:Name="contentControl"
             Content="{x:Bind RecordField.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

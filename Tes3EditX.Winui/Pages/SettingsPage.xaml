@@ -62,8 +62,8 @@
                 <ToggleSwitch
                     Header="Display Mode"
                     IsOn="{x:Bind ViewModel.SettingsService.Readonly, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    OffContent="Read-only"
-                    OnContent="Editable" />
+                    OffContent="Editable"
+                    OnContent="Read-only" />
                 <ToggleSwitch
                     Header="Plugin Save Mode"
                     IsOn="{x:Bind ViewModel.SettingsService.OverwriteOnSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

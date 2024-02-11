@@ -5,7 +5,6 @@
     xmlns:controls="using:Tes3EditX.Winui.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:Tes3EditX.Winui.Helpers"
-    xmlns:interfaces="using:TES3Lib.Interfaces"
     xmlns:itemviewmodels="using:Tes3EditX.Backend.ViewModels.ItemViewModels"
     xmlns:local="using:Tes3EditX.Winui.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -31,6 +30,7 @@
             Source="{x:Bind ViewModel.GroupedRecords, Mode=OneWay}" />
 
         <helpers:BooleanToColorConverterFieldName x:Key="ColorConverterFieldName" />
+        <helpers:BooleanToColorConverterField x:Key="ColorConverterField" />
 
         <!--  Item Repeaters  -->
         <DataTemplate x:Key="CategoryTemplate" x:DataType="itemviewmodels:ConflictRecordFieldViewModel">
@@ -78,12 +78,27 @@
         <helpers:StringOrFieldTemplateSelector
             x:Key="StringOrFieldTemplateSelector"
             FieldDataTemplate="{StaticResource FieldDataTemplate}"
+            ReadonlyFieldDataTemplate="{StaticResource ReadonlyFieldDataTemplate}"
             StringDataTemplate="{StaticResource StringDataTemplate}" />
 
         <!--  Toplevel Templates  -->
         <DataTemplate x:Key="FieldDataTemplate" x:DataType="viewmodels:RecordFieldViewModel">
             <Grid>
                 <controls:RecordFieldTemplate RecordField="{x:Bind Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ReadonlyFieldDataTemplate" x:DataType="viewmodels:RecordFieldViewModel">
+            <Grid>
+                <TextBlock
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{x:Bind IsConflict, Mode=OneWay, Converter={StaticResource ColorConverterField}}"
+                    Text="{x:Bind}"
+                    TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
 
