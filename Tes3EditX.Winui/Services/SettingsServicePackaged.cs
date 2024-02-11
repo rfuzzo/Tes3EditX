@@ -1,4 +1,5 @@
 ﻿using AppUIBasics.Helper;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -8,7 +9,7 @@ using Windows.Storage;
 
 namespace Tes3EditX.Winui.Services;
 
-public class SettingsServicePackaged : ISettingsService
+public class SettingsServicePackaged : ObservableObject, ISettingsService
 {
     public string GetName() => AppInfo.Current.Package.DisplayName;
 
@@ -35,6 +36,8 @@ public class SettingsServicePackaged : ISettingsService
         }
     }
     public bool CullConflicts { get => Get(false); set => Set(value); }
+    public bool OverwriteOnSave { get => Get(false); set => Set(value); }
+    public bool Readonly { get => Get(false); set => Set(value); }
     public string Theme { get => Get("Dark"); set => Set(value); }
 
     public static T Get<T>(T defaultValue, [CallerMemberName] string? key = null) where T : notnull

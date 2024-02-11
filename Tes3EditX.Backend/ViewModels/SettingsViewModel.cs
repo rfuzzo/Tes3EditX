@@ -10,35 +10,35 @@ namespace Tes3EditX.Backend.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
-    private readonly ISettingsService _settingsService;
+    public ISettingsService SettingsService;
 
     public SettingsViewModel(ISettingsService settingsService)
     {
-        _settingsService = settingsService;
+        SettingsService = settingsService;
 
-        CullConflicts = _settingsService.CullConflicts;
-        MinConflicts = _settingsService.MinConflicts;
+        CullConflicts = SettingsService.CullConflicts;
+        MinConflicts = SettingsService.MinConflicts;
 
-        Name = $"{_settingsService.GetName()} Version: {_settingsService.GetVersionString()}";
+        Name = $"{SettingsService.GetName()} Version: {SettingsService.GetVersionString()}";
     }
 
     [ObservableProperty]
     private bool _cullConflicts;
     partial void OnCullConflictsChanged(bool value)
     {
-        _settingsService.CullConflicts = value;
+        SettingsService.CullConflicts = value;
     }
 
     [ObservableProperty]
     private int _minConflicts;
     partial void OnMinConflictsChanged(int value)
     {
-        _settingsService.MinConflicts = value;
+        SettingsService.MinConflicts = value;
     }
 
     public void SetTheme(string color)
     {
-        _settingsService.Theme = color;
+        SettingsService.Theme = color;
     }
 
     [ObservableProperty]

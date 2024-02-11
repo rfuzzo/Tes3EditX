@@ -31,15 +31,15 @@ namespace Tes3EditX.Winui.Pages
         public SettingsPage()
         {
             this.InitializeComponent();
-            Loaded += OnSettingsPageLoaded;
 
             this.DataContext = App.Current.Services.GetService<SettingsViewModel>();
 
+            OnSettingsPageLoaded();
         }
 
         public SettingsViewModel ViewModel => (SettingsViewModel)DataContext;
 
-        private void OnSettingsPageLoaded(object sender, RoutedEventArgs e)
+        private void OnSettingsPageLoaded()
         {
             var currentTheme = ThemeHelper.RootTheme;
             switch (currentTheme)
@@ -81,11 +81,6 @@ namespace Tes3EditX.Winui.Pages
 
                 ViewModel.SetTheme(color);
             }
-        }
-
-        private void installerToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

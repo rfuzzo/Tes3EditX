@@ -40,10 +40,11 @@
             VerticalScrollMode="Auto">
 
             <StackPanel HorizontalAlignment="Left">
+                <!--  Theme  -->
                 <TextBlock
                     Margin="0,12,0,12"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="Theme Mode" />
+                    Text="Theme mode" />
                 <ComboBox
                     x:Name="themeMode"
                     AutomationProperties.AutomationId="themeModeComboBox"
@@ -53,11 +54,30 @@
                     <ComboBoxItem Content="Use system setting" Tag="Default" />
                 </ComboBox>
 
+                <!--  Display mode  -->
+                <TextBlock
+                    Margin="0,12,0,12"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="App settings" />
+                <ToggleSwitch
+                    Header="Display Mode"
+                    IsOn="{x:Bind ViewModel.SettingsService.Readonly, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    OffContent="Read-only"
+                    OnContent="Editable" />
+                <ToggleSwitch
+                    Header="Plugin Save Mode"
+                    IsOn="{x:Bind ViewModel.SettingsService.OverwriteOnSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    OffContent="Save as patch"
+                    OnContent="Overwrite plugins" />
+
+
+                <!--  Conflicts  -->
                 <TextBlock
                     Margin="0,40,0,0"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="Conflicts" />
+                    Text="Conflict settings" />
                 <StackPanel Margin="0,10,0,0">
+                    <!--  Conflicts checker mode  -->
                     <ToggleSwitch
                         x:Name="installerToggle"
                         Margin="0,0,0,4"
@@ -66,6 +86,7 @@
                         OffContent="No"
                         OnContent="Yes" />
 
+                    <!--  Min conflicts  -->
                     <Slider
                         Margin="0,0,0,4"
                         AutomationProperties.Name="simple slider"
@@ -75,6 +96,10 @@
                         Value="{x:Bind ViewModel.MinConflicts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 </StackPanel>
+
+
+
+
             </StackPanel>
 
         </ScrollViewer>

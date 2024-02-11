@@ -14,22 +14,23 @@ public partial class CompareViewModel : ObservableObject
 
     private readonly ICompareService _compareService;
     private readonly INavigationService _navigationService;
+    
+    public ISettingsService SettingsService;
 
     public CompareViewModel(
+        ISettingsService settingsService,
         INavigationService navigationService,
         INotificationService notificationService,
         ICompareService compareService)
     {
         NotificationService = notificationService;
+        SettingsService = settingsService;
         _navigationService = navigationService;
         _compareService = compareService;
     }
 
     [ObservableProperty]
     private bool _isPaneOpen = true;
-
-    [ObservableProperty]
-    private bool _saveOverwrite;
 
 
     [RelayCommand]
@@ -61,7 +62,7 @@ public partial class CompareViewModel : ObservableObject
         // get dirty records
         if (_compareService.DirtyRecords.Count > 0)
         {
-            if (SaveOverwrite)
+            if (SettingsService.OverwriteOnSave)
             {
                 var keys = _compareService.DirtyRecords.Keys.OrderBy(x => x.Extension.ToLower())
                     .ThenBy(x => x.LastWriteTime);

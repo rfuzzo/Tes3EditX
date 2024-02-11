@@ -93,7 +93,7 @@
 
                         <AppBarToggleButton
                             Icon="ReportHacked"
-                            IsChecked="{x:Bind ViewModel.SaveOverwrite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsChecked="{x:Bind ViewModel.SettingsService.OverwriteOnSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Label="Overwrite plugins" />
 
 

@@ -13,6 +13,22 @@ namespace Tes3EditX.Winui.Services;
 public partial class SettingsServiceUnpackaged : ObservableObject, ISettingsService
 {
     private const string FileName = "appsettings.json";
+
+    [ObservableProperty]
+    private int minConflicts = 2;
+
+    [ObservableProperty]
+    private bool cullConflicts = false;
+
+    [ObservableProperty]
+    private string theme = ElementTheme.Dark.ToString();
+
+    [ObservableProperty]
+    private bool _overwriteOnSave;
+
+    [ObservableProperty]
+    private bool _readonly;
+
     public string GetName()
     {
         return "Tes3EditX";
@@ -34,7 +50,6 @@ public partial class SettingsServiceUnpackaged : ObservableObject, ISettingsServ
 
     }
 
-
     public SettingsServiceUnpackaged()
     {
         PropertyChanged += SettingsServiceUnpackaged_PropertyChanged;
@@ -47,24 +62,17 @@ public partial class SettingsServiceUnpackaged : ObservableObject, ISettingsServ
             default:
                 {
                     // save to file
-                    string jsonString = JsonSerializer.Serialize(this, new JsonSerializerOptions()
+                    JsonSerializerOptions jsonSerializerOptions = new()
                     {
                         WriteIndented = true,
-                    });
+                    };
+                    JsonSerializerOptions options = jsonSerializerOptions;
+                    string jsonString = JsonSerializer.Serialize(this, options);
                     File.WriteAllText(GetFullPath(), jsonString);
                     break;
                 }
         }
-    }
-
-    [ObservableProperty]
-    private int minConflicts = 2;
-
-    [ObservableProperty]
-    private bool cullConflicts = false;
-
-    [ObservableProperty]
-    private string theme = ElementTheme.Dark.ToString();
+    }    
 
     private static string GetFullPath()
     {
