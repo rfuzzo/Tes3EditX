@@ -84,7 +84,7 @@
         <!--  Toplevel Templates  -->
         <DataTemplate x:Key="FieldDataTemplate" x:DataType="viewmodels:RecordFieldViewModel">
             <Grid>
-                <controls:RecordFieldTemplate RecordField="{x:Bind Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <controls:RecordFieldTemplate Enabled="{x:Bind IsEnabled, Mode=OneWay}" WrappedField="{x:Bind WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </DataTemplate>
 

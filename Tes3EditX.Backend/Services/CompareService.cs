@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
 using Tes3EditX.Backend.Extensions;
@@ -101,7 +102,7 @@ public partial class CompareService(INotificationService notificationService, IS
         if (_settingsService.CullConflicts)
         {
 
-            List<RecordId> toRemove = [];
+            ConcurrentBag<RecordId> toRemove = [];
 
             Stopwatch stopwatch = Stopwatch.StartNew();
 

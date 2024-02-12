@@ -28,29 +28,57 @@ public sealed partial class RecordFieldTemplate : UserControl
     {
         InitializeComponent();        
     }
-    
-    public static readonly DependencyProperty RecordFieldProperty = DependencyProperty.Register(
-          nameof(RecordField),
-          typeof(RecordFieldViewModel),
+
+    //public static readonly DependencyProperty RecordFieldProperty = DependencyProperty.Register(
+    //      nameof(RecordField),
+    //      typeof(RecordFieldViewModel),
+    //      typeof(RecordFieldTemplate),
+    //      new PropertyMetadata(null)
+    //    );
+
+    //public RecordFieldViewModel RecordField
+    //{
+    //    get { return (RecordFieldViewModel)GetValue(RecordFieldProperty); }
+    //    set { SetValue(RecordFieldProperty, value); }
+    //}
+
+    public static readonly DependencyProperty WrappedFieldProperty = DependencyProperty.Register(
+          nameof(WrappedField),
+          typeof(object),
           typeof(RecordFieldTemplate),
           new PropertyMetadata(null)
         );
 
-    public RecordFieldViewModel RecordField
+    public object WrappedField
     {
-        get { return (RecordFieldViewModel)GetValue(RecordFieldProperty); }
-        set { SetValue(RecordFieldProperty, value); }
+        get { return (object)GetValue(WrappedFieldProperty); }
+        set { SetValue(WrappedFieldProperty, value); }
     }
+
+    public static readonly DependencyProperty EnabledProperty = DependencyProperty.Register(
+         nameof(Enabled),
+         typeof(bool),
+         typeof(RecordFieldTemplate),
+         new PropertyMetadata(null)
+       );
+
+    public bool Enabled
+    {
+        get { return (bool)GetValue(EnabledProperty); }
+        set { SetValue(EnabledProperty, value); }
+    }
+
+
 
     private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         // notify the record/plugin that something changed
-        if (sender is TextBox ctrl && RecordField.WrappedField is string val)
+        if (sender is TextBox ctrl && WrappedField is string val)
         {
             string text = ctrl.Text;
             if (!string.IsNullOrEmpty(text) && val.Trim('\0') != text)
             {
-                RecordField.WrappedField = text;
+                WrappedField = text;
             }
         }
     }
@@ -59,36 +87,36 @@ public sealed partial class RecordFieldTemplate : UserControl
     {
         if (sender is NumberBox ctrl)
         {
-            if (RecordField.WrappedField is int i )
+            if (WrappedField is int i )
             {
                 int ctrlVal = (int)ctrl.Value;
                 if (i != ctrlVal)
                 {
-                    RecordField.WrappedField = ctrlVal;
+                    WrappedField = ctrlVal;
                 }
             }
-            else if (RecordField.WrappedField is short s)
+            else if (WrappedField is short s)
             {
                 short ctrlVal = (short)ctrl.Value;
                 if (s != ctrlVal)
                 {
-                    RecordField.WrappedField = ctrlVal;
+                    WrappedField = ctrlVal;
                 }
             }
-            else if (RecordField.WrappedField is byte b)
+            else if (WrappedField is byte b)
             {
                 byte ctrlVal = (byte)ctrl.Value;
                 if (b != ctrlVal)
                 {
-                    RecordField.WrappedField = ctrlVal;
+                    WrappedField = ctrlVal;
                 }
             }
-            else if (RecordField.WrappedField is float f)
+            else if (WrappedField is float f)
             {
                 float ctrlVal = (float)ctrl.Value;
                 if (f != ctrlVal)
                 {
-                    RecordField.WrappedField = ctrlVal;
+                    WrappedField = ctrlVal;
                 }
             }
         }
@@ -96,17 +124,17 @@ public sealed partial class RecordFieldTemplate : UserControl
 
     private void FlagsTemplate_ValueChanged(object sender, HashSetValueChangedEventArgs e)
     {
-        if (RecordField.WrappedField is IEnumerable)
+        if (WrappedField is IEnumerable)
         {
-            RecordField.WrappedField = e.Hashset;
+            WrappedField = e.Hashset;
         }
     }
 
     private void EnumTemplate_ValueChanged(object sender, EnumValueChangedEventArgs e)
     {
-        if (RecordField.WrappedField is Enum)
+        if (WrappedField is Enum)
         {
-            RecordField.WrappedField = e.Enum;
+            WrappedField = e.Enum;
         }
     }
 }

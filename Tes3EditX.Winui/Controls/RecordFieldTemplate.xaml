@@ -172,9 +172,9 @@
             <!--<TextBlock Foreground="{ThemeResource SystemChromeGrayColor}" Text="{x:Bind RecordField.Type, Mode=OneWay}" />-->
 
             <ContentControl
-                Content="{x:Bind RecordField.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Content="{x:Bind WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
-                IsEnabled="{x:Bind RecordField.IsEnabled, Mode=OneWay}" />
+                IsEnabled="{x:Bind Enabled, Mode=OneWay}" />
         </StackPanel>
     </Grid>
 </UserControl>
