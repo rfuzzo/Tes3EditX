@@ -44,10 +44,10 @@ public sealed partial class RecordFieldTemplate : UserControl
     private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         // notify the record/plugin that something changed
-        if (sender is TextBox textBox && RecordField.WrappedField is string str)
+        if (sender is TextBox ctrl && RecordField.WrappedField is string val)
         {
-            string text = textBox.Text;
-            if (!string.IsNullOrEmpty(text) && str.Trim('\0') != text)
+            string text = ctrl.Text;
+            if (!string.IsNullOrEmpty(text) && val.Trim('\0') != text)
             {
                 RecordField.WrappedField = text;
             }
@@ -56,11 +56,13 @@ public sealed partial class RecordFieldTemplate : UserControl
 
     private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
     {
-
-    }
-
-    public static void OnValueChanged()
-    {
-
+        if (sender is NumberBox ctrl && RecordField.WrappedField is int val)
+        {
+            int ctrlVal = (int)ctrl.Value;
+            if (val != ctrlVal)
+            {
+                RecordField.WrappedField = ctrlVal;
+            }
+        }
     }
 }

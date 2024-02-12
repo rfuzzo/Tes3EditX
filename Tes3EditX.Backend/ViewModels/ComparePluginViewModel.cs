@@ -77,15 +77,15 @@ public partial class ComparePluginViewModel : ObservableObject
 #if PARALLEL
         var progress = new Progress<int>(_ => _notificationService.Progress++) as IProgress<int>;
 
-        //await Task.Run(() =>
-        //{
+        await Task.Run(() =>
+        {
             Parallel.ForEach(pluginPaths, (item, token) =>
             {
                 var plugin = TES3.TES3Load(item.FullName);
                 plugins.Add(new(item, plugin));
                 progress.Report(0);
             });
-        //});
+        });
 #else
          foreach (var item in pluginPaths)
          {

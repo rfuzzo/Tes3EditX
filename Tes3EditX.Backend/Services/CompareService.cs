@@ -321,6 +321,11 @@ public partial class CompareService(INotificationService notificationService, IS
             List<RecordFieldViewModel> c = conflicts[i].Item2;
             List<RecordFieldViewModel> c_last = conflicts[i - 1].Item2;
 
+            if (c.Count != c_last.Count)
+            {
+                throw new ArgumentException();
+            }
+
             for (int j = 0; j < c.Count; j++)
             {
                 RecordFieldViewModel f = c[j];

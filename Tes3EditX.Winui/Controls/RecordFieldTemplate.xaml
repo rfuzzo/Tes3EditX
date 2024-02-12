@@ -14,12 +14,27 @@
         <helpers:WrappedFieldTemplateSelector
             x:Key="WrappedFieldTemplateSelector"
             BooleanTemplate="{StaticResource BooleanTemplate}"
+            FloatTemplate="{StaticResource FloatTemplate}"
             GenericTemplate="{StaticResource GenericTemplate}"
             IntegerTemplate="{StaticResource IntegerTemplate}"
             StringTemplate="{StaticResource StringTemplate}" />
 
 
         <!--  Inner Templates  -->
+        <DataTemplate x:Key="GenericTemplate">
+            <Grid>
+                <TextBlock
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="Purple"
+                    Text="TODO"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
         <DataTemplate x:Key="BooleanTemplate" x:DataType="x:Boolean">
             <Grid>
                 <CheckBox
@@ -33,7 +48,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="GenericTemplate">
+        <DataTemplate x:Key="FloatTemplate">
             <Grid>
                 <TextBlock
                     MinWidth="300"
