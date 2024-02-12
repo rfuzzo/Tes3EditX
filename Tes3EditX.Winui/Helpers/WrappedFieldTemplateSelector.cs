@@ -16,6 +16,7 @@ public class WrappedFieldTemplateSelector : DataTemplateSelector
     public DataTemplate? FloatTemplate { get; set; }
     
     public DataTemplate? BooleanTemplate { get; set; }
+    public DataTemplate? EnumTemplate { get; set; }
     
     public DataTemplate? ListTemplate { get; set; }
     public DataTemplate? FlagsTemplate { get; set; }
@@ -65,6 +66,10 @@ public class WrappedFieldTemplateSelector : DataTemplateSelector
                         if (value is IEnumerable)
                         {
                             return FlagsTemplate;
+                        }
+                        if (value is Enum e)
+                        {
+                            return EnumTemplate;
                         }
                        
                     }

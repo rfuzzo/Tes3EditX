@@ -40,6 +40,12 @@ public partial class FlagsTemplate : UserControl
       new PropertyMetadata(null, Changed)
     );
 
+    public IEnumerable List
+    {
+        get { return (IEnumerable)GetValue(ListProperty); }
+        set { SetValue(ListProperty, value); }
+    }
+
     // Holds all values of the enum
     // bound to UI
     [ObservableProperty]
@@ -84,42 +90,40 @@ public partial class FlagsTemplate : UserControl
         }
     }
 
-    public IEnumerable List
-    {
-        get { return (IEnumerable)GetValue(ListProperty); }
-        set { SetValue(ListProperty, value); }
-    }
+   
 
-    public event EventHandler<ValueChangedEventArgs>? ValueChanged;
+    public event EventHandler<HashSetValueChangedEventArgs>? ValueChanged;
 
     private void listview_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (IsInitialized)
+        if (!IsInitialized)
         {
-            if (sender is ListView ctrl)
-            {
-                var selectedItems = ctrl.SelectedItems;
-                if (selectedItems is not null)
-                {
-                    // set property
-                    var type = EnumType;
-                    if (type is not null)
-                    {
-                        dynamic? hs = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(type));
-                        if (hs is not null)
-                        {
-                            foreach (var item in Flags)
-                            {
-                                if (selectedItems.Contains(item))
-                                {
-                                    dynamic enumObject = item;
-                                    hs.Add(enumObject);
-                                }
+            return;
+        }
 
+        if (sender is ListView ctrl)
+        {
+            var selectedItems = ctrl.SelectedItems;
+            if (selectedItems is not null)
+            {
+                // set property
+                var type = EnumType;
+                if (type is not null)
+                {
+                    dynamic? hs = Activator.CreateInstance(typeof(HashSet<>).MakeGenericType(type));
+                    if (hs is not null)
+                    {
+                        foreach (var item in Flags)
+                        {
+                            if (selectedItems.Contains(item))
+                            {
+                                dynamic enumObject = item;
+                                hs.Add(enumObject);
                             }
 
-                            ValueChanged?.Invoke(this, new(hs));
                         }
+
+                        ValueChanged?.Invoke(this, new(hs));
                     }
                 }
             }
@@ -127,7 +131,7 @@ public partial class FlagsTemplate : UserControl
     }
 }
 
-public class ValueChangedEventArgs(IEnumerable value) : EventArgs
+public class HashSetValueChangedEventArgs(IEnumerable value) : EventArgs
 {
     public IEnumerable List { get; set; } = value;
 }

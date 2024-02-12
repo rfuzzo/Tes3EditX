@@ -15,6 +15,7 @@
             x:Key="WrappedFieldTemplateSelector"
             BooleanTemplate="{StaticResource BooleanTemplate}"
             ByteTemplate="{StaticResource ByteTemplate}"
+            EnumTemplate="{StaticResource EnumTemplate}"
             FlagsTemplate="{StaticResource FlagsTemplate}"
             FloatTemplate="{StaticResource FloatTemplate}"
             GenericTemplate="{StaticResource GenericTemplate}"
@@ -37,6 +38,8 @@
                     TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
+
+
 
         <DataTemplate x:Key="BooleanTemplate" x:DataType="x:Boolean">
             <Grid>
@@ -143,6 +146,12 @@
         <DataTemplate x:Key="FlagsTemplate">
             <Grid>
                 <local:FlagsTemplate List="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ValueChanged="FlagsTemplate_ValueChanged" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="EnumTemplate">
+            <Grid>
+                <local:EnumTemplate MyEnum="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ValueChanged="EnumTemplate_ValueChanged" />
             </Grid>
         </DataTemplate>
 

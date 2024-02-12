@@ -10,6 +10,9 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Controls\EnumTemplate.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\FlagsTemplate.xaml">
       <SubType>Designer</SubType>
     </Page>

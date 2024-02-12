@@ -94,11 +94,19 @@ public sealed partial class RecordFieldTemplate : UserControl
         }
     }
 
-    private void FlagsTemplate_ValueChanged(object sender, ValueChangedEventArgs e)
+    private void FlagsTemplate_ValueChanged(object sender, HashSetValueChangedEventArgs e)
     {
         if (RecordField.WrappedField is IEnumerable)
         {
             RecordField.WrappedField = e.List;
+        }
+    }
+
+    private void EnumTemplate_ValueChanged(object sender, EnumValueChangedEventArgs e)
+    {
+        if (RecordField.WrappedField is Enum)
+        {
+            RecordField.WrappedField = e.Enum;
         }
     }
 }
