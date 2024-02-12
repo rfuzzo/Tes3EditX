@@ -20,6 +20,7 @@
             FloatTemplate="{StaticResource FloatTemplate}"
             GenericTemplate="{StaticResource GenericTemplate}"
             IntegerTemplate="{StaticResource IntegerTemplate}"
+            ListTemplate="{StaticResource ListTemplate}"
             ShortTemplate="{StaticResource ShortTemplate}"
             StringTemplate="{StaticResource StringTemplate}" />
 
@@ -38,8 +39,6 @@
                     TextWrapping="Wrap" />
             </Grid>
         </DataTemplate>
-
-
 
         <DataTemplate x:Key="BooleanTemplate" x:DataType="x:Boolean">
             <Grid>
@@ -155,12 +154,22 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="ListTemplate">
+            <Grid>
+                <!--<local:ListTemplate List="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
+                <ListView
+                    x:Name="listview"
+                    ItemTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
+                    ItemsSource="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <Grid>
         <StackPanel>
             <!--  DBG  -->
-            <TextBlock Foreground="{ThemeResource SystemChromeGrayColor}" Text="{x:Bind RecordField.Type, Mode=OneWay}" />
+            <!--<TextBlock Foreground="{ThemeResource SystemChromeGrayColor}" Text="{x:Bind RecordField.Type, Mode=OneWay}" />-->
 
             <ContentControl
                 Content="{x:Bind RecordField.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

@@ -51,31 +51,30 @@ public class WrappedFieldTemplateSelector : DataTemplateSelector
                 return BooleanTemplate;
             case float:
                 return FloatTemplate;
-            // list
-            // hashset = flags
-            // enums
-            
+            case byte[]:
+                return GenericTemplate; // TODO
+            case Array array:
+                {
+                    // check if matrix
+                    if (array.Rank > 1)
+                    {
+                        // TODO
+                        return GenericTemplate;
+                    } else
+                    {
+                        return ListTemplate;
+                    }
+                }
+            case IEnumerable:
+                return FlagsTemplate;
+            case Enum:
+                return EnumTemplate;
             default:
                 {
                     if (value is not null)
                     {
-                        if (value is IList l || value is Array a)
-                        {
-                            return ListTemplate;
-                        }
-                        if (value is IEnumerable)
-                        {
-                            return FlagsTemplate;
-                        }
-                        if (value is Enum e)
-                        {
-                            return EnumTemplate;
-                        }
-                       
+                        // TODO logging
                     }
-
-                   
-
                     break;
                 }
                 

@@ -8,5 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid />
+    <Grid>
+        <ListView
+            x:Name="listview"
+            ItemTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
+            ItemsSource="{x:Bind List, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    </Grid>
 </UserControl>

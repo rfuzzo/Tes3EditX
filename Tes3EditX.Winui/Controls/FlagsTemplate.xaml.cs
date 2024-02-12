@@ -133,5 +133,5 @@ public partial class FlagsTemplate : UserControl
 
 public class HashSetValueChangedEventArgs(IEnumerable value) : EventArgs
 {
-    public IEnumerable List { get; set; } = value;
+    public IEnumerable Hashset { get; set; } = value;
 }

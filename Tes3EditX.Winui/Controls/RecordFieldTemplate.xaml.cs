@@ -98,7 +98,7 @@ public sealed partial class RecordFieldTemplate : UserControl
     {
         if (RecordField.WrappedField is IEnumerable)
         {
-            RecordField.WrappedField = e.List;
+            RecordField.WrappedField = e.Hashset;
         }
     }
 
