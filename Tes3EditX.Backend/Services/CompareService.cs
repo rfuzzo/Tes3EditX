@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
 using Tes3EditX.Backend.Extensions;
@@ -225,8 +226,10 @@ public partial class CompareService(INotificationService notificationService, IS
                 Record? record = plugin.Records.FirstOrDefault(x => x is not null && x.GetUniqueId() == recordId);
                 if (record is not null)
                 {
-                    bool isReadonly = pluginPath.Extension.Equals(".esm", StringComparison.InvariantCultureIgnoreCase);
-                    conflictsMap.Add((pluginPath.Name, GetFieldsOfRecord(pluginPath, record, names, isReadonly)));
+                    bool isReadonly = !_settingsService.OverwriteOnSave && pluginPath.Extension.Equals(".esm", StringComparison.InvariantCultureIgnoreCase);
+
+                    var fields = GetFieldsOfRecord(pluginPath, record, names, isReadonly);
+                    conflictsMap.Add((pluginPath.Name, fields));
                 }
             }
         }
@@ -277,6 +280,8 @@ public partial class CompareService(INotificationService notificationService, IS
             }
         }
 
+        
+
         // flatten
         foreach ((string name, var val) in map)
         {
@@ -293,6 +298,8 @@ public partial class CompareService(INotificationService notificationService, IS
 
         }
 
+        
+
         return fields;
     }
 
@@ -301,6 +308,12 @@ public partial class CompareService(INotificationService notificationService, IS
         if (value1 is string a && value2 is string b)
         {
             return a.Trim('\0').Equals(b.Trim('\0'));
+        }
+        else if (value1 is IEnumerable ea && value2 is IEnumerable eb)
+        {
+            var la = ea.Cast<object>();
+            var lb = eb.Cast<object>();
+            return Enumerable.SequenceEqual(la, lb);
         }
         else
         {
@@ -321,15 +334,11 @@ public partial class CompareService(INotificationService notificationService, IS
             List<RecordFieldViewModel> c = conflicts[i].Item2;
             List<RecordFieldViewModel> c_last = conflicts[i - 1].Item2;
 
-            if (c.Count != c_last.Count)
-            {
-                throw new ArgumentException();
-            }
-
+          
             for (int j = 0; j < c.Count; j++)
             {
                 RecordFieldViewModel f = c[j];
-                if (j > c_last.Count)
+                if (j >= c_last.Count)
                 {
                     f.IsConflict = true;
                     anyConflict = true;

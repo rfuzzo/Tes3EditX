@@ -16,7 +16,7 @@ namespace Tes3EditX.Winui.Helpers
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 
@@ -31,7 +31,7 @@ namespace Tes3EditX.Winui.Helpers
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
     }
 }

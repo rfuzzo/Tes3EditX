@@ -27,6 +27,7 @@ namespace Tes3EditX.Backend.ViewModels
             Name = name;
 
             Text = ToString();
+            Type = wrappedField?.GetType().ToString() ?? "NULL";
             IsEnabled = !_isReadonly;
         }
 
@@ -37,6 +38,7 @@ namespace Tes3EditX.Backend.ViewModels
         private bool _isEnabled;
 
         public string Name { get; }
+        public string Type { get; }
         public string Text { get; }
         public bool IsConflict { get; set; }
 

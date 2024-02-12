@@ -14,7 +14,7 @@
     <Version>1.1.0</Version>
 
     <Nullable>enable</Nullable>
-
+	  
     <WindowsPackageType>None</WindowsPackageType>
     <!-- This bundles the .NET Core libraries -->
     <SelfContained>true</SelfContained>
@@ -29,6 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Controls\FlagsTemplate.xaml" />
     <None Remove="Controls\ListTemplate.xaml" />
     <None Remove="Controls\RecordFieldTemplate.xaml" />
     <None Remove="Pages\ComparePage.xaml" />
@@ -65,6 +66,11 @@
   <ItemGroup>
     <ProjectReference Include="..\TES3Tool\TES3Lib\TES3Lib.csproj" />
     <ProjectReference Include="..\Tes3EditX.Backend\Tes3EditX.Backend.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\FlagsTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\RecordFieldTemplate.xaml">

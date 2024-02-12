@@ -14,9 +14,12 @@
         <helpers:WrappedFieldTemplateSelector
             x:Key="WrappedFieldTemplateSelector"
             BooleanTemplate="{StaticResource BooleanTemplate}"
+            ByteTemplate="{StaticResource ByteTemplate}"
+            FlagsTemplate="{StaticResource FlagsTemplate}"
             FloatTemplate="{StaticResource FloatTemplate}"
             GenericTemplate="{StaticResource GenericTemplate}"
             IntegerTemplate="{StaticResource IntegerTemplate}"
+            ShortTemplate="{StaticResource ShortTemplate}"
             StringTemplate="{StaticResource StringTemplate}" />
 
 
@@ -50,15 +53,56 @@
 
         <DataTemplate x:Key="FloatTemplate">
             <Grid>
-                <TextBlock
+                <NumberBox
                     MinWidth="300"
                     MaxWidth="300"
                     Margin="0,0,0,10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                    Text="{x:Bind}"
-                    TextWrapping="Wrap" />
+                    LargeChange="10"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Compact"
+                    ValueChanged="NumberBox_ValueChanged"
+                    Value="{Binding}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ByteTemplate">
+            <Grid>
+                <NumberBox
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    LargeChange="10"
+                    Maximum="255"
+                    Minimum="0"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Compact"
+                    ValueChanged="NumberBox_ValueChanged"
+                    Value="{Binding}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ShortTemplate">
+            <Grid>
+                <NumberBox
+                    MinWidth="300"
+                    MaxWidth="300"
+                    Margin="0,0,0,10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                    LargeChange="10"
+                    Maximum="32767"
+                    Minimum="-32768"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Compact"
+                    ValueChanged="NumberBox_ValueChanged"
+                    Value="{Binding}" />
             </Grid>
         </DataTemplate>
 
@@ -72,6 +116,8 @@
                     VerticalAlignment="Top"
                     Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
                     LargeChange="10"
+                    Maximum="2147483647"
+                    Minimum="-2147483648"
                     SmallChange="1"
                     SpinButtonPlacementMode="Compact"
                     ValueChanged="NumberBox_ValueChanged"
@@ -94,13 +140,23 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="FlagsTemplate">
+            <Grid>
+                <local:FlagsTemplate List="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ValueChanged="FlagsTemplate_ValueChanged" />
+            </Grid>
+        </DataTemplate>
+
     </UserControl.Resources>
 
     <Grid>
-        <ContentControl
-            x:Name="contentControl"
-            Content="{x:Bind RecordField.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-            ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
-            IsEnabled="{x:Bind RecordField.IsEnabled, Mode=OneWay}" />
+        <StackPanel>
+            <!--  DBG  -->
+            <TextBlock Foreground="{ThemeResource SystemChromeGrayColor}" Text="{x:Bind RecordField.Type, Mode=OneWay}" />
+
+            <ContentControl
+                Content="{x:Bind RecordField.WrappedField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                ContentTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
+                IsEnabled="{x:Bind RecordField.IsEnabled, Mode=OneWay}" />
+        </StackPanel>
     </Grid>
 </UserControl>

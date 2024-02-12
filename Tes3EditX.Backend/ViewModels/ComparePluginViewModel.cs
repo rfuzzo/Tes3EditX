@@ -4,8 +4,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Reflection;
+using Tes3EditX.Backend.Extensions;
 using Tes3EditX.Backend.Services;
 using TES3Lib;
+using TES3Lib.Base;
 
 namespace Tes3EditX.Backend.ViewModels;
 
@@ -72,8 +75,6 @@ public partial class ComparePluginViewModel : ObservableObject
 
         var plugins = new ConcurrentBag<PluginItemViewModel>();
 
-
-
 #if PARALLEL
         var progress = new Progress<int>(_ => _notificationService.Progress++) as IProgress<int>;
 
@@ -105,6 +106,61 @@ public partial class ComparePluginViewModel : ObservableObject
         _notificationService.Enabled = true;
 
         await Task.CompletedTask;
+    }
+
+    private static List<Type> GetTypesOfRecord(Record record, List<string> names)
+    {
+        Dictionary<string, (Subrecord subrecord, PropertyInfo propertyInfo)?> map = [];
+        List<Type> fields = [];
+
+        foreach (string name in names)
+        {
+            map.Add(name, null);
+        }
+
+        // get properties with reflection recursively
+        foreach (Subrecord? subrecord in record.GetType().GetProperties(
+               BindingFlags.Public |
+               BindingFlags.Instance |
+               BindingFlags.DeclaredOnly).Select(x => x.GetValue(record) as Subrecord).Where(x => x is not null))
+        {
+            if (subrecord is not null)
+            {
+                PropertyInfo[] properties = subrecord.GetType().GetProperties(
+                    BindingFlags.Public |
+                    BindingFlags.Instance |
+                    BindingFlags.DeclaredOnly);
+
+                foreach (PropertyInfo propertyInfo in properties)
+                {
+                    if (map.ContainsKey($"{subrecord.Name}.{propertyInfo.Name}"))
+                    {
+                        map[$"{subrecord.Name}.{propertyInfo.Name}"] = (subrecord, propertyInfo);
+                    }
+                    else if (map.ContainsKey(propertyInfo.Name))
+                    {
+                        map[propertyInfo.Name] = (subrecord, propertyInfo);
+                    }
+                }
+            }
+        }
+
+
+
+        // flatten
+        foreach ((string name, var val) in map)
+        {
+            if (val is not null)
+            {
+                object? field = val.Value.propertyInfo.GetValue(val.Value.subrecord);
+                if (field is not null)
+                {
+                    fields.Add(field.GetType());
+                }
+            }
+        }
+
+        return fields;
     }
 
     [RelayCommand]

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,13 +57,48 @@ public sealed partial class RecordFieldTemplate : UserControl
 
     private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
     {
-        if (sender is NumberBox ctrl && RecordField.WrappedField is int val)
+        if (sender is NumberBox ctrl)
         {
-            int ctrlVal = (int)ctrl.Value;
-            if (val != ctrlVal)
+            if (RecordField.WrappedField is int i )
             {
-                RecordField.WrappedField = ctrlVal;
+                int ctrlVal = (int)ctrl.Value;
+                if (i != ctrlVal)
+                {
+                    RecordField.WrappedField = ctrlVal;
+                }
             }
+            else if (RecordField.WrappedField is short s)
+            {
+                short ctrlVal = (short)ctrl.Value;
+                if (s != ctrlVal)
+                {
+                    RecordField.WrappedField = ctrlVal;
+                }
+            }
+            else if (RecordField.WrappedField is byte b)
+            {
+                byte ctrlVal = (byte)ctrl.Value;
+                if (b != ctrlVal)
+                {
+                    RecordField.WrappedField = ctrlVal;
+                }
+            }
+            else if (RecordField.WrappedField is float f)
+            {
+                float ctrlVal = (float)ctrl.Value;
+                if (f != ctrlVal)
+                {
+                    RecordField.WrappedField = ctrlVal;
+                }
+            }
+        }
+    }
+
+    private void FlagsTemplate_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        if (RecordField.WrappedField is IEnumerable)
+        {
+            RecordField.WrappedField = e.List;
         }
     }
 }

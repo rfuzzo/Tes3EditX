@@ -37,8 +37,6 @@ public class NavigationService : INavigationService
         else
         {
             return;
-            //throw new NotImplementedException();
-            //(App.StartupWindow as MainWindow).Navigate(typeof(ComparePage), "");
         }
     }
 

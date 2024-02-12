@@ -151,7 +151,7 @@ public partial class ConflictsViewModel : ObservableRecipient
             }
         }
 
-        Tags = new(tags);
+        Tags = new(tags.Order());
 
         FilterRecords();
     }

@@ -62,7 +62,7 @@ public sealed partial class MainWindow : Window
             }
             else
             {
-                throw new NotImplementedException();
+                throw new ArgumentException();
             }
         }
     }
