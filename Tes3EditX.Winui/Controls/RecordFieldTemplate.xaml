@@ -157,10 +157,15 @@
         <DataTemplate x:Key="ListTemplate">
             <Grid>
                 <!--<local:ListTemplate List="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
-                <ListView
-                    x:Name="listview"
-                    ItemTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
-                    ItemsSource="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ListView x:Name="listview" ItemsSource="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <local:RecordFieldTemplate ValueChanged="RecordFieldTemplate_ValueChanged" WrappedField="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </Grid>
         </DataTemplate>
 

@@ -26,7 +26,9 @@ public sealed partial class RecordFieldTemplate : UserControl
 {
     public RecordFieldTemplate()
     {
-        InitializeComponent();        
+        InitializeComponent();
+
+        Enabled = true;
     }
 
     //public static readonly DependencyProperty RecordFieldProperty = DependencyProperty.Register(
@@ -46,13 +48,35 @@ public sealed partial class RecordFieldTemplate : UserControl
           nameof(WrappedField),
           typeof(object),
           typeof(RecordFieldTemplate),
-          new PropertyMetadata(null)
+          new PropertyMetadata(null, OnChanged)
         );
+
+    private static void OnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RecordFieldTemplate ctrl)
+        {
+            if (ctrl.DataContext != ctrl.WrappedField)
+            {
+
+            }
+        }
+    }
+
+    private void RecordFieldTemplate_ValueChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    public event EventHandler? ValueChanged;
 
     public object WrappedField
     {
         get { return (object)GetValue(WrappedFieldProperty); }
-        set { SetValue(WrappedFieldProperty, value); }
+        set { 
+            SetValue(WrappedFieldProperty, value);
+            ValueChanged?.Invoke(this, new());
+
+        }
     }
 
     public static readonly DependencyProperty EnabledProperty = DependencyProperty.Register(
@@ -137,4 +161,6 @@ public sealed partial class RecordFieldTemplate : UserControl
             WrappedField = e.Enum;
         }
     }
+
+    
 }
