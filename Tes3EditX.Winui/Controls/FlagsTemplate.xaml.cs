@@ -57,34 +57,34 @@ public partial class FlagsTemplate : UserControl
     private static void Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         // get generic argument
-        if (d is FlagsTemplate control)
+        if (d is FlagsTemplate ctrl)
         {
-            control.IsInitialized = false;
-            control.EnumType = control.List.GetType().GenericTypeArguments.FirstOrDefault();
-            if (control.EnumType is not null)
+            ctrl.IsInitialized = false;
+            ctrl.EnumType = ctrl.List.GetType().GenericTypeArguments.FirstOrDefault();
+            if (ctrl.EnumType is not null)
             {
-                var values = Enum.GetValues(control.EnumType);
+                var values = Enum.GetValues(ctrl.EnumType);
                 var flags = values.Cast<object>().ToList();
                 if (flags is not null)
                 {
-                    if (!control.Flags.ToList().SequenceEqual(flags))
+                    if (!ctrl.Flags.ToList().SequenceEqual(flags))
                     {
-                        control.Flags = new(flags);
+                        ctrl.Flags = new(flags);
                     }
 
-                    control.listview.SelectedItems.Clear();
-                    control.listview.SetValue(ListView.ItemsSourceProperty, control.Flags);
-                    foreach (var x in control.List)
+                    ctrl.listview.SelectedItems.Clear();
+                    ctrl.listview.SetValue(ListView.ItemsSourceProperty, ctrl.Flags);
+                    foreach (var x in ctrl.List)
                     {
                         if (x is not null)
                         {
-                            int i = control.Flags.IndexOf(x);
-                            control.listview.SelectRange(new ItemIndexRange(i, 1));
+                            int i = ctrl.Flags.IndexOf(x);
+                            ctrl.listview.SelectRange(new ItemIndexRange(i, 1));
                         }
 
                     }
 
-                    control.IsInitialized = true;
+                    ctrl.IsInitialized = true;
                 }
             }
         }

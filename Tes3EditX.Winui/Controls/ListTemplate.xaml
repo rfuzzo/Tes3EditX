@@ -9,9 +9,14 @@
     mc:Ignorable="d">
 
     <Grid>
-        <ListView
-            x:Name="listview"
-            ItemTemplateSelector="{StaticResource WrappedFieldTemplateSelector}"
-            ItemsSource="{x:Bind List, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ItemsView x:Name="listview" ItemsSource="{x:Bind BindingList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <ItemsView.ItemTemplate>
+                <DataTemplate x:DataType="local:ItemViewModel">
+                    <ItemContainer>
+                        <local:RecordFieldTemplate ValueChanged="RecordFieldTemplate_ValueChanged" WrappedField="{x:Bind Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </ItemContainer>
+                </DataTemplate>
+            </ItemsView.ItemTemplate>
+        </ItemsView>
     </Grid>
 </UserControl>

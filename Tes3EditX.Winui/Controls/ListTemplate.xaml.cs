@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -8,6 +9,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -20,6 +22,7 @@ using Windows.Foundation.Collections;
 
 namespace Tes3EditX.Winui.Controls;
 
+[ObservableObject]
 public sealed partial class ListTemplate : UserControl
 {
     //public event EventHandler<HashSetValueChangedEventArgs>? ValueChanged;
@@ -29,9 +32,12 @@ public sealed partial class ListTemplate : UserControl
         InitializeComponent();
     }
 
+    [ObservableProperty]
+    private ObservableCollection<ItemViewModel> _bindingList = [];
+
     public static readonly DependencyProperty ListProperty = DependencyProperty.Register(
         nameof(List),
-        typeof(IList),
+        typeof(Array),
         typeof(ListTemplate),
         new PropertyMetadata(null, Changed)
     );
@@ -39,23 +45,41 @@ public sealed partial class ListTemplate : UserControl
     private static void Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         // get generic argument
-        if (d is FlagsTemplate control)
+        if (d is ListTemplate ctrl)
         {
-            control.IsInitialized = false;
-
+            ctrl.BindingList.Clear();
+            foreach (var item in ctrl.List)
+            {
+                ctrl.BindingList.Add(new(item));
+            }
         }
     
     }
 
-    public IList List
+    public Array List
     {
-        get { return (IList)GetValue(ListProperty); }
+        get { return (Array)GetValue(ListProperty); }
         set { SetValue(ListProperty, value); }
     }
 
-    public bool IsInitialized { get; set; }
+    //public bool IsInitialized { get; set; }
+
+    private void RecordFieldTemplate_ValueChanged(object sender, EventArgs e)
+    {
+        //if (!IsInitialized)
+        //{
+        //    return;
+        //}
+
+        List = BindingList.Select(x => x.Name).ToArray();
+    }
 }
 
+public partial class ItemViewModel(object? name) : ObservableObject
+{
+    [ObservableProperty]
+    private object? _name = name;
+}
 
 public class ListValueChangedEventArgs(IList value) : EventArgs
 {

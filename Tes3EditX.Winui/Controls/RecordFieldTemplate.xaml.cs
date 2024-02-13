@@ -31,19 +31,6 @@ public sealed partial class RecordFieldTemplate : UserControl
         Enabled = true;
     }
 
-    //public static readonly DependencyProperty RecordFieldProperty = DependencyProperty.Register(
-    //      nameof(RecordField),
-    //      typeof(RecordFieldViewModel),
-    //      typeof(RecordFieldTemplate),
-    //      new PropertyMetadata(null)
-    //    );
-
-    //public RecordFieldViewModel RecordField
-    //{
-    //    get { return (RecordFieldViewModel)GetValue(RecordFieldProperty); }
-    //    set { SetValue(RecordFieldProperty, value); }
-    //}
-
     public static readonly DependencyProperty WrappedFieldProperty = DependencyProperty.Register(
           nameof(WrappedField),
           typeof(object),
@@ -55,16 +42,7 @@ public sealed partial class RecordFieldTemplate : UserControl
     {
         if (d is RecordFieldTemplate ctrl)
         {
-            if (ctrl.DataContext != ctrl.WrappedField)
-            {
-
-            }
         }
-    }
-
-    private void RecordFieldTemplate_ValueChanged(object sender, EventArgs e)
-    {
-
     }
 
     public event EventHandler? ValueChanged;
@@ -72,11 +50,7 @@ public sealed partial class RecordFieldTemplate : UserControl
     public object WrappedField
     {
         get { return (object)GetValue(WrappedFieldProperty); }
-        set { 
-            SetValue(WrappedFieldProperty, value);
-            ValueChanged?.Invoke(this, new());
-
-        }
+        set { SetValue(WrappedFieldProperty, value); }
     }
 
     public static readonly DependencyProperty EnabledProperty = DependencyProperty.Register(
@@ -92,8 +66,6 @@ public sealed partial class RecordFieldTemplate : UserControl
         set { SetValue(EnabledProperty, value); }
     }
 
-
-
     private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         // notify the record/plugin that something changed
@@ -103,6 +75,7 @@ public sealed partial class RecordFieldTemplate : UserControl
             if (!string.IsNullOrEmpty(text) && val.Trim('\0') != text)
             {
                 WrappedField = text;
+                ValueChanged?.Invoke(this, new());
             }
         }
     }
@@ -117,6 +90,7 @@ public sealed partial class RecordFieldTemplate : UserControl
                 if (i != ctrlVal)
                 {
                     WrappedField = ctrlVal;
+                    ValueChanged?.Invoke(this, new());
                 }
             }
             else if (WrappedField is short s)
@@ -125,6 +99,7 @@ public sealed partial class RecordFieldTemplate : UserControl
                 if (s != ctrlVal)
                 {
                     WrappedField = ctrlVal;
+                    ValueChanged?.Invoke(this, new());
                 }
             }
             else if (WrappedField is byte b)
@@ -133,6 +108,7 @@ public sealed partial class RecordFieldTemplate : UserControl
                 if (b != ctrlVal)
                 {
                     WrappedField = ctrlVal;
+                    ValueChanged?.Invoke(this, new());
                 }
             }
             else if (WrappedField is float f)
@@ -141,6 +117,7 @@ public sealed partial class RecordFieldTemplate : UserControl
                 if (f != ctrlVal)
                 {
                     WrappedField = ctrlVal;
+                    ValueChanged?.Invoke(this, new());
                 }
             }
         }
@@ -151,6 +128,7 @@ public sealed partial class RecordFieldTemplate : UserControl
         if (WrappedField is IEnumerable)
         {
             WrappedField = e.Hashset;
+            ValueChanged?.Invoke(this, new());
         }
     }
 
@@ -159,6 +137,7 @@ public sealed partial class RecordFieldTemplate : UserControl
         if (WrappedField is Enum)
         {
             WrappedField = e.Enum;
+            ValueChanged?.Invoke(this, new());
         }
     }
 
