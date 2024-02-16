@@ -13,7 +13,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json;
 using System.Threading.Channels;
+using TES3Lib.Subrecords.Shared;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -25,12 +27,16 @@ namespace Tes3EditX.Winui.Controls;
 [ObservableObject]
 public sealed partial class ListTemplate : UserControl
 {
-    //public event EventHandler<HashSetValueChangedEventArgs>? ValueChanged;
+    public event EventHandler<ListValueChangedEventArgs>? ValueChanged;
 
     public ListTemplate()
     {
         InitializeComponent();
     }
+
+    public Type? ListType { get; set; }
+
+    public bool IsInitialized { get; set; }
 
     [ObservableProperty]
     private ObservableCollection<ItemViewModel> _bindingList = [];
@@ -44,10 +50,12 @@ public sealed partial class ListTemplate : UserControl
 
     private static void Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        // get generic argument
-        if (d is ListTemplate ctrl)
+        if (d is ListTemplate ctrl && !ctrl.IsInitialized)
         {
             ctrl.BindingList.Clear();
+
+            ctrl.ListType = ctrl.List.GetType();
+
             foreach (var item in ctrl.List)
             {
                 ctrl.BindingList.Add(new(item));
@@ -62,16 +70,24 @@ public sealed partial class ListTemplate : UserControl
         set { SetValue(ListProperty, value); }
     }
 
-    //public bool IsInitialized { get; set; }
-
     private void RecordFieldTemplate_ValueChanged(object sender, EventArgs e)
     {
-        //if (!IsInitialized)
-        //{
-        //    return;
-        //}
+        IsInitialized = true;
 
-        List = BindingList.Select(x => x.Name).ToArray();
+        if (ListType is not null)
+        {
+            var json = JsonSerializer.Serialize(BindingList.Select(x => x.Name).ToArray());
+            dynamic? val = JsonSerializer.Deserialize(json, ListType);
+
+            if (val != null)
+            {
+                List = val;
+                ValueChanged?.Invoke(this, new(val));
+            }
+            
+        }
+
+        IsInitialized = false;
     }
 }
 

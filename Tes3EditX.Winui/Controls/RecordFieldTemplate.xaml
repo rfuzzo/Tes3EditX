@@ -156,7 +156,10 @@
 
         <DataTemplate x:Key="ListTemplate">
             <Grid>
-                <local:ListTemplate DataContext="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" List="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <local:ListTemplate
+                    DataContext="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    List="{Binding Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    ValueChanged="ListTemplate_ValueChanged" />
             </Grid>
         </DataTemplate>
 

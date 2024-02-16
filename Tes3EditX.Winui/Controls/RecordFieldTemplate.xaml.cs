@@ -141,5 +141,12 @@ public sealed partial class RecordFieldTemplate : UserControl
         }
     }
 
-    
+    private void ListTemplate_ValueChanged(object sender, ListValueChangedEventArgs e)
+    {
+        if (WrappedField is Array)
+        {
+            WrappedField = e.List;
+            ValueChanged?.Invoke(this, new());
+        }
+    }
 }
